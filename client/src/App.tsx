@@ -12,6 +12,7 @@ import "@fontsource/inter";
 
 // Lazy load heavy sections
 const PortalsSection = lazy(() => import("./components/sections/PortalsSection").then(m => ({ default: m.PortalsSection })));
+const SensoryTabs = lazy(() => import("./components/SensoryTabs").then(m => ({ default: m.SensoryTabs })));
 const GardenNav = lazy(() => import("./components/sections/GardenNav").then(m => ({ default: m.GardenNav })));
 const PracticesSection = lazy(() => import("./components/sections/PracticesSection").then(m => ({ default: m.PracticesSection })));
 const PersonalJourney = lazy(() => import("./components/sections/PersonalJourney").then(m => ({ default: m.PersonalJourney })));
@@ -82,6 +83,7 @@ function App() {
         <StatementSection />
         <Suspense fallback={null}>
           <PortalsSection />
+          <SensoryTabs />
           <PersonalJourney />
           <GardenNav />
           <PracticesSection />
