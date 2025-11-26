@@ -1,4 +1,9 @@
 // Web Vitals monitoring for Core Web Vitals tracking
+interface PerformanceEntryWithTime extends PerformanceEntry {
+  renderTime?: number;
+  loadTime?: number;
+}
+
 export interface WebVitalsMetrics {
   lcp?: number;
   inp?: number;
@@ -15,8 +20,8 @@ export function trackWebVitals() {
     try {
       const lcpObserver = new PerformanceObserver((list) => {
         const entries = list.getEntries();
-        const lastEntry = entries[entries.length - 1];
-        metrics.lcp = lastEntry.renderTime || lastEntry.loadTime;
+        const lastEntry = entries[entries.length - 1] as PerformanceEntryWithTime;
+        metrics.lcp = (lastEntry.renderTime || lastEntry.loadTime) as number;
       });
       lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
     } catch (e) {

@@ -1,4 +1,8 @@
 // Detect device capability for adaptive quality settings
+interface NavigatorWithMemory extends Navigator {
+  deviceMemory?: number;
+}
+
 export interface DeviceCapability {
   isMobile: boolean;
   isLowPower: boolean;
@@ -20,12 +24,13 @@ export function detectDeviceCapability(): DeviceCapability {
   }
 
   // Check for Low Power Mode on iOS
-  if (navigator.deviceMemory) {
-    isLowPower = isLowPower || navigator.deviceMemory <= 4;
+  const navWithMemory = navigator as NavigatorWithMemory;
+  if (navWithMemory.deviceMemory) {
+    isLowPower = isLowPower || navWithMemory.deviceMemory <= 4;
   }
 
   // Memory estimate
-  const memoryAvailable = navigator.deviceMemory || 8;
+  const memoryAvailable = navWithMemory.deviceMemory || 8;
   isLowPower = isLowPower || memoryAvailable <= 4;
 
   // Connection type
