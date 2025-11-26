@@ -1,0 +1,209 @@
+I want to lock in a clean, efficient, fully wired version of this architecture without shrinking the vision. Please:
+•	Verify all wiring: Make sure every room component (`StatementSection`, `PortalsSection`, `PersonalJourney`, `GardenNav`, `PracticesSection`, `InteractiveConnections`, `ProcessDocumentation`, `CaseStudiesSection`, `RoomsSection`, `FooterSection`) accepts the right props (like `onSectionChange` / `currentRoom`), includes `RoomSwitcher`, and actually participates in the `SectionId` / `roomMap` model. No orphan sections, no dead states.
+•	Optimize React Three + UI performance: Review `Scene` and any heavy effects for unnecessary re-renders, overdraw, or expensive calculations; use memoization or lightweight variants where possible so the site stays fast even as I add more installations.[pixelfreestudio +1]
+•	Accessibility and semantics: Ensure all interactive elements (buttons, links, toggles) are keyboard-focusable, have visible focus styles, ARIA labels where appropriate, and pass basic color-contrast checks. Respect `prefers-reduced-motion` across `RoomSwitcher`, `SensoryTabs`, and section animations.[motion +2]
+•	Responsive integrity: Confirm the layout works on small phones, tablets, and large screens (no clipped content, nav always discoverable, RoomSwitcher not overlapping critical text).[magicui +1]
+•	Code clarity for future big ideas: Add short comments or JSDoc blocks at the top of `App.tsx`, `Scene.tsx`, `RoomSwitcher`, `SensoryTabs`, and each section describing their role, so I can keep pushing new concepts without tangling the core.
+
+Per the statement section file 
+
+This section is still built for a scroll-based world. Research on scroll behavior shows people rarely give sustained attention to long, scroll-tied animations; discrete, self-contained “screens” with clear affordances tend to work better for orientation and recall in conceptual experiences like yours.[1][2]
+
+## How to make this a “room”
+
+To align `StatementSection` with your room-based model and interaction goals:
+
+- Remove the dependency on viewport scroll (`useScroll`, `scrollYProgress`) and treat the section as a self-contained scene that animates **on mount / on in-view**, not based on page position. This matches the idea of “stepping into a room” rather than “passing by a wall on a corridor.”[3][4]
+- Add `RoomSwitcher` and an `onSectionChange` prop so the section participates in the navigation system. This ensures it’s wired like the others and gives users visible, accessible controls to move on without relying on scroll.[5][6]
+
+## Concrete rewrite pattern
+
+Conceptually, you want something closer to:
+
+- A simple `section` with a centered block of animated text that fades/slides in once.  
+- No `useScroll`; instead, use Framer Motion’s `initial` / `animate` and maybe `whileInView` with a reasonable `viewport` setting to preserve the “appearing” effect.[4][3]
+- A `RoomSwitcher` at the bottom so users can feel the space, then choose the next room.  
+
+You do not have to abandon the word-by-word highlight; just decouple it from scroll and keep the animation lighter so it works well with `prefers-reduced-motion` and on lower-end devices, which accessibility and performance guides both recommend.[7][3][4]
+
+Sources
+[1] Scrolling and Attention - NN/G https://www.nngroup.com/articles/scrolling-and-attention/
+[2] Scroll Depth Secrets: How and why to track it - Reffine https://www.reffine.com/en/blog/Scroll-Depth-Secrets-How-and-why-to-track-it
+[3] Accessible Animations in React with "prefers-reduced-motion" https://www.joshwcomeau.com/react/prefers-reduced-motion/
+[4] Create accessible animations in React — Guide - Motion https://motion.dev/docs/react-accessibility
+[5] Getting started | React Navigation https://reactnavigation.org/docs/getting-started/
+[6] Ultimate Guide to Navigation in ReactJs - Angular Minds https://www.angularminds.com/blog/navigation-in-reactjs
+[7] prefers-reduced-motion - CSS - MDN Web Docs https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion
+
+Your architecture is already very close to what you’re describing: room-based, mood-aware, and wired for big ideas without needing heavy scrolling.[1][2]
+
+## What your current core does well
+
+- `App` now keeps the 3D scene fixed and changes rooms via `activeSection`, so the environment feels continuous while content changes.[3]
+- `RoomSwitcher` centralizes navigation, adds subtle sound and motion, and respects `prefers-reduced-motion`, which is exactly the “sensory but considerate” pattern accessibility guides recommend.[4][5][6]
+- Using a `SectionId` type and a `roomMap` keeps routing clean and extensible, which is what scalable React navigation patterns aim for.[7][3]
+
+## What to tell the agent next time (performance + accessibility + “dream big”)
+
+When you get more cycles, send something like this (you can paste and tweak):
+
+> I want to lock in a **clean, efficient, fully wired** version of this architecture without shrinking the vision. Please:
+> - **Verify all wiring:** Make sure every room component (`StatementSection`, `PortalsSection`, `PersonalJourney`, `GardenNav`, `PracticesSection`, `InteractiveConnections`, `ProcessDocumentation`, `CaseStudiesSection`, `RoomsSection`, `FooterSection`) accepts the right props (like `onSectionChange` / `currentRoom`), includes `RoomSwitcher`, and actually participates in the `SectionId` / `roomMap` model. No orphan sections, no dead states.  
+> - **Optimize React Three + UI performance:** Review `Scene` and any heavy effects for unnecessary re-renders, overdraw, or expensive calculations; use memoization or lightweight variants where possible so the site stays fast even as I add more installations.[8][9]
+> - **Accessibility and semantics:** Ensure all interactive elements (buttons, links, toggles) are keyboard-focusable, have visible focus styles, ARIA labels where appropriate, and pass basic color-contrast checks. Respect `prefers-reduced-motion` across `RoomSwitcher`, `SensoryTabs`, and section animations.[5][6][4]
+> - **Responsive integrity:** Confirm the layout works on small phones, tablets, and large screens (no clipped content, nav always discoverable, RoomSwitcher not overlapping critical text).[10][3]
+> - **Code clarity for future big ideas:** Add short comments or JSDoc blocks at the top of `App.tsx`, `Scene.tsx`, `RoomSwitcher`, `SensoryTabs`, and each section describing their role, so I can keep pushing new concepts without tangling the core.  
+
+## How to keep it “big, not heavy”
+
+- Favor **shared systems** (like your `SectionId`, room profiles, and ambient controls) over one-off effects; this lets you add wild ideas by changing configuration instead of writing tons of new code.[11][7]
+- Use **progressive enhancement**: start from a simple, accessible baseline, then layer motion, sound, and depth that can be turned down by users or by `prefers-reduced-motion`, which is what modern motion-UX guidelines recommend.[4][5]
+
+If you want, the next step here can be: pick one room (e.g., `StatementSection`), paste its current code, and that can become the “gold standard” room that sets the visual and interaction language the others copy.
+
+Sources
+[1] Scrolling and Attention - NN/G https://www.nngroup.com/articles/scrolling-and-attention/
+[2] Understanding Scroll Depth: Definition, Importance, and Measurement https://trffcc.com/glossary/scroll-depth
+[3] Ultimate Guide to Navigation in ReactJs - Angular Minds https://www.angularminds.com/blog/navigation-in-reactjs
+[4] Accessible Animations in React with "prefers-reduced-motion" https://www.joshwcomeau.com/react/prefers-reduced-motion/
+[5] Create accessible animations in React — Guide - Motion https://motion.dev/docs/react-accessibility
+[6] prefers-reduced-motion - CSS - MDN Web Docs https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion
+[7] Getting started | React Navigation https://reactnavigation.org/docs/getting-started/
+[8] How to Use Framer Motion for Advanced Animations in React https://blog.pixelfreestudio.com/how-to-use-framer-motion-for-advanced-animations-in-react/
+[9] Scene-Based Navigation for React and React Native - GitHub https://github.com/grahammendick/navigation
+[10] Build a Responsive Navbar in React JS - Magic UI https://magicui.design/blog/navbar-in-react-js
+[11] Zustand: Introduction https://zustand.docs.pmnd.rs
+
+You get that “Blender-in-a-browser” feeling by combining three things: physically based materials, good lighting/depth, and a strict design system for when to go photoreal vs. stylized.[1][2]
+
+## 3D depth that actually feels spatial
+
+- Use **camera + composition + depth effects**: a slightly offset perspective camera, foreground/midground/background objects, fog, and optional depth-of-field give instant depth cues, especially when tied to your `activeSection`.[3][4][5]
+- Add **shadows and contact**: turn on shadows for key meshes and use a shadow-receiving ground or contact plane; tutorials show that even simple soft shadows immediately push Three.js/R3F scenes out of “flat demo” territory.[6][7][8]
+- Consider **subtle postprocessing**: depth-of-field and fog via `@react-three/postprocessing` can make your rooms feel like lenses looking into a world instead of a flat canvas, as long as you keep effects gentle to avoid performance hits.[4][5][3]
+
+## Textures, materials, and “lived-in” surfaces
+
+- Use **PBR materials** (`meshStandardMaterial` with maps) for anything that should feel physical—color (albedo), normal, roughness, AO, and optionally displacement maps; R3F texture-loading docs show how to wire all of these via `useTexture`.[9][10][11]
+- For “lifelike” realism: pick or bake high-quality textures, pair color + normal + roughness correctly, and use linear color spaces for normal maps when needed to avoid artifacts.[12][13][9]
+- For “cyberpunk / cyberspace”: lean into emissive colors, fresnel-style rim light, and stylized shaders; shader guides with R3F show how to create atmospheric edge glows and custom materials that still sit on top of proper depth and lighting.[14][15]
+
+## Design system: when to go big, when to stay light
+
+- Define **where 3D earns its keep**: pick a few hero interactions or rooms where you go deep with geometry, textures, and lighting; elsewhere, use lighter, abstract geometry or particles so the site doesn’t feel visually or computationally noisy.[16][1]
+- Set **material tiers**:  
+  - Tier 1: fully PBR, shadows, maybe postprocessing (hero scenes, key “installations”).  
+  - Tier 2: lit but simpler materials (MeshStandard or MeshLambert, limited textures) for supporting elements.  
+  - Tier 3: unlit/emissive for UI-linked accents where performance and clarity matter most.[17][16]
+- Keep a **global mood Bible**: a palette of environments (e.g., “Garden dusk,” “Neon atrium,” “Soft studio”) that define light, fog, contrast, and motion per room so each space feels intentional rather than random.[8][9][16]
+
+## “Perfectly accessorized” without killing performance
+
+- Reuse **texture sets and material definitions** across rooms instead of creating everything from scratch; R3F examples show how far you can go with a small library of well-chosen assets.[11][1]
+- Use **instancing and simple geo** for repeated elements (orbs, particles, tiles) so you can fill space and imply richness without paying a per-mesh cost.[5][1][16]
+- Profile and tune: drop poly counts where normal maps can fake detail, and reserve the heaviest effects (high-res displacement, complex shaders) for the few places where they deliver emotional impact.[12][16]
+
+If you want to ground this, next step is: pick one room (e.g., “Garden”) and decide whether it should feel like a physical courtyard, a neon data-forest, or something else; then your material, light, and texture choices snap into place around that one clear mood.
+
+Sources
+[1] Examples - React Three Fiber https://r3f.docs.pmnd.rs/getting-started/examples
+[2] React Three Fiber: Introduction https://r3f.docs.pmnd.rs
+[3] Depth buffer (in depth): How to implement a fog post-processing ... https://blog.anaili.fr/articles/depth-buffer-fog
+[4] DepthOfField - React Postprocessing https://react-postprocessing.docs.pmnd.rs/effects/depth-of-field
+[5] Depth Of Field - React Three Fiber Tutorials https://sbcode.net/react-three-fiber/depth-of-field/
+[6] How to make 3D models more realistic in React Three Fiber without ... https://www.facebook.com/groups/threejs/posts/2397145003806147/
+[7] Three.js Realistic Lighting Setup Tutorial - YouTube https://www.youtube.com/watch?v=7GGNzryHfTw
+[8] Illuminating Your 3D Scenes: A Guide to Lights in Three.js https://dev.to/cloudysarah/illuminating-your-3d-scenes-a-guide-to-lights-in-threejs-93i
+[9] Lights - Three.js Journey https://threejs-journey.com/lessons/lights
+[10] 12c How to use PBR materials three.js - YouTube https://www.youtube.com/watch?v=kDpMryM5FsA
+[11] Loading Textures - React Three Fiber https://r3f.docs.pmnd.rs/tutorials/loading-textures
+[12] Displacement Maps, Normal Maps, and Textures in React Three Fiber https://codeworkshop.dev/blog/2020-11-05-displacement-maps-normal-maps-and-textures-in-react-three-fiber
+[13] Issue #3370 · pmndrs/react-three-fiber - GitHub https://github.com/pmndrs/react-three-fiber/issues/3370
+[14] The Study of Shaders with React Three Fiber - Maxime Heckel Blog https://blog.maximeheckel.com/posts/the-study-of-shaders-with-react-three-fiber/
+[15] Just rewrote my Custom-Shader-Material to work with react-three ... https://www.reddit.com/r/threejs/comments/sen4gi/just_rewrote_my_customshadermaterial_to_work_with/
+[16] Mini tutorial on making Threejs look good/realistic - Resources https://discourse.threejs.org/t/mini-tutorial-on-making-threejs-look-good-realistic/47989
+[17] React Three Fiber & Three.js - Materials Explained - YouTube https://www.youtube.com/watch?v=coc0DxZtMKc
+[18] Making the scene more realistic - Questions - three.js forum https://discourse.threejs.org/t/making-the-scene-more-realistic/61051
+[19] How to use baked textures with gltfjsx loader #1302 - GitHub https://github.com/pmndrs/react-three-fiber/discussions/1302
+[20] Depth Textures and World Coordinates In Fragment Shaders https://www.thefrontdev.co.uk/post-processing-in-react-three-fiber-depth-textures-and-world-coordinates-in-fragment-shaders/
+You get that “Blender-in-a-browser” feeling by combining three things: physically based materials, good lighting/depth, and a strict design system for when to go photoreal vs. stylized.[1][2]
+
+## 3D depth that actually feels spatial
+
+- Use **camera + composition + depth effects**: a slightly offset perspective camera, foreground/midground/background objects, fog, and optional depth-of-field give instant depth cues, especially when tied to your `activeSection`.[3][4][5]
+- Add **shadows and contact**: turn on shadows for key meshes and use a shadow-receiving ground or contact plane; tutorials show that even simple soft shadows immediately push Three.js/R3F scenes out of “flat demo” territory.[6][7][8]
+- Consider **subtle postprocessing**: depth-of-field and fog via `@react-three/postprocessing` can make your rooms feel like lenses looking into a world instead of a flat canvas, as long as you keep effects gentle to avoid performance hits.[4][5][3]
+
+## Textures, materials, and “lived-in” surfaces
+
+- Use **PBR materials** (`meshStandardMaterial` with maps) for anything that should feel physical—color (albedo), normal, roughness, AO, and optionally displacement maps; R3F texture-loading docs show how to wire all of these via `useTexture`.[9][10][11]
+- For “lifelike” realism: pick or bake high-quality textures, pair color + normal + roughness correctly, and use linear color spaces for normal maps when needed to avoid artifacts.[12][13][9]
+- For “cyberpunk / cyberspace”: lean into emissive colors, fresnel-style rim light, and stylized shaders; shader guides with R3F show how to create atmospheric edge glows and custom materials that still sit on top of proper depth and lighting.[14][15]
+
+## Design system: when to go big, when to stay light
+
+- Define **where 3D earns its keep**: pick a few hero interactions or rooms where you go deep with geometry, textures, and lighting; elsewhere, use lighter, abstract geometry or particles so the site doesn’t feel visually or computationally noisy.[16][1]
+- Set **material tiers**:  
+  - Tier 1: fully PBR, shadows, maybe postprocessing (hero scenes, key “installations”).  
+  - Tier 2: lit but simpler materials (MeshStandard or MeshLambert, limited textures) for supporting elements.  
+  - Tier 3: unlit/emissive for UI-linked accents where performance and clarity matter most.[17][16]
+- Keep a **global mood Bible**: a palette of environments (e.g., “Garden dusk,” “Neon atrium,” “Soft studio”) that define light, fog, contrast, and motion per room so each space feels intentional rather than random.[8][9][16]
+
+## “Perfectly accessorized” without killing performance
+
+- Reuse **texture sets and material definitions** across rooms instead of creating everything from scratch; R3F examples show how far you can go with a small library of well-chosen assets.[11][1]
+- Use **instancing and simple geo** for repeated elements (orbs, particles, tiles) so you can fill space and imply richness without paying a per-mesh cost.[5][1][16]
+- Profile and tune: drop poly counts where normal maps can fake detail, and reserve the heaviest effects (high-res displacement, complex shaders) for the few places where they deliver emotional impact.[12][16]
+
+If you want to ground this, next step is: pick one room (e.g., “Garden”) and decide whether it should feel like a physical courtyard, a neon data-forest, or something else; then your material, light, and texture choices snap into place around that one clear mood.
+
+Sources
+[1] Examples - React Three Fiber https://r3f.docs.pmnd.rs/getting-started/examples
+[2] React Three Fiber: Introduction https://r3f.docs.pmnd.rs
+[3] Depth buffer (in depth): How to implement a fog post-processing ... https://blog.anaili.fr/articles/depth-buffer-fog
+[4] DepthOfField - React Postprocessing https://react-postprocessing.docs.pmnd.rs/effects/depth-of-field
+[5] Depth Of Field - React Three Fiber Tutorials https://sbcode.net/react-three-fiber/depth-of-field/
+[6] How to make 3D models more realistic in React Three Fiber without ... https://www.facebook.com/groups/threejs/posts/2397145003806147/
+[7] Three.js Realistic Lighting Setup Tutorial - YouTube https://www.youtube.com/watch?v=7GGNzryHfTw
+[8] Illuminating Your 3D Scenes: A Guide to Lights in Three.js https://dev.to/cloudysarah/illuminating-your-3d-scenes-a-guide-to-lights-in-threejs-93i
+[9] Lights - Three.js Journey https://threejs-journey.com/lessons/lights
+[10] 12c How to use PBR materials three.js - YouTube https://www.youtube.com/watch?v=kDpMryM5FsA
+[11] Loading Textures - React Three Fiber https://r3f.docs.pmnd.rs/tutorials/loading-textures
+[12] Displacement Maps, Normal Maps, and Textures in React Three Fiber https://codeworkshop.dev/blog/2020-11-05-displacement-maps-normal-maps-and-textures-in-react-three-fiber
+[13] Issue #3370 · pmndrs/react-three-fiber - GitHub https://github.com/pmndrs/react-three-fiber/issues/3370
+[14] The Study of Shaders with React Three Fiber - Maxime Heckel Blog https://blog.maximeheckel.com/posts/the-study-of-shaders-with-react-three-fiber/
+[15] Just rewrote my Custom-Shader-Material to work with react-three ... https://www.reddit.com/r/threejs/comments/sen4gi/just_rewrote_my_customshadermaterial_to_work_with/
+[16] Mini tutorial on making Threejs look good/realistic - Resources https://discourse.threejs.org/t/mini-tutorial-on-making-threejs-look-good-realistic/47989
+[17] React Three Fiber & Three.js - Materials Explained - YouTube https://www.youtube.com/watch?v=coc0DxZtMKc
+[18] Making the scene more realistic - Questions - three.js forum https://discourse.threejs.org/t/making-the-scene-more-realistic/61051
+[19] How to use baked textures with gltfjsx loader #1302 - GitHub https://github.com/pmndrs/react-three-fiber/discussions/1302
+[20] Depth Textures and World Coordinates In Fragment Shaders https://www.thefrontdev.co.uk/post-processing-in-react-three-fiber-depth-textures-and-world-coordinates-in-fragment-shaders/
+Define the “house rules” first, then derive distinct room profiles from them.
+
+## House rules (always consistent)
+
+- **Camera and motion:** Same camera type, distance, and basic parallax behavior in every room; only intensity varies.[1]
+- **Nav and UI shell:** Same `RoomSwitcher`, button shapes, typography scale, and general layout frame so movement always feels familiar.[2][3]
+- **Lighting logic:** Single global rig pattern (key + fill + rim + ambient / environment map) and shared animation easing curves, even if colors and strengths change per room.[4][5][6]
+
+## Room profiles (where identity lives)
+
+For each room define a small config object, e.g.:
+
+- `lightColor`, `accentColor`, `fogColor`, `motionIntensity`, `noiseLevel`, `materialTheme` (metal/glass, organic, neon, etc.).[6][7][8]
+- Depth options: fog density, DOF strength, SSAO amount, tuned per room while using the same underlying effects.[9][10][11]
+
+Your scene and UI then read from that profile, so “Statement,” “Garden,” “Portals,” etc. feel clearly different yet obviously part of one system. If you want, next step is to sketch those room profiles in a small TypeScript config and wire them into `Scene` and your sections.
+
+Sources
+[1] React Three Fiber: Introduction https://r3f.docs.pmnd.rs
+[2] Building a Tabs component | Articles - web.dev https://web.dev/articles/building/a-tabs-component
+[3] Ultimate Guide to Navigation in ReactJs - Angular Minds https://www.angularminds.com/blog/navigation-in-reactjs
+[4] Lights - Three.js Journey https://threejs-journey.com/lessons/lights
+[5] Illuminating Your 3D Scenes: A Guide to Lights in Three.js https://dev.to/cloudysarah/illuminating-your-3d-scenes-a-guide-to-lights-in-threejs-93i
+[6] Mini tutorial on making Threejs look good/realistic - Resources https://discourse.threejs.org/t/mini-tutorial-on-making-threejs-look-good-realistic/47989
+[7] Making the scene more realistic - Questions - three.js forum https://discourse.threejs.org/t/making-the-scene-more-realistic/61051
+[8] Displacement Maps, Normal Maps, and Textures in React Three Fiber https://codeworkshop.dev/blog/2020-11-05-displacement-maps-normal-maps-and-textures-in-react-three-fiber
+[9] Depth buffer (in depth): How to implement a fog post-processing ... https://blog.anaili.fr/articles/depth-buffer-fog
+[10] DepthOfField - React Postprocessing https://react-postprocessing.docs.pmnd.rs/effects/depth-of-field
+[11] Depth Of Field - React Three Fiber Tutorials https://sbcode.net/react-three-fiber/depth-of-field/

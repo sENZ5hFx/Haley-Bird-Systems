@@ -1,0 +1,75 @@
+Define the profiles in one place, then let everything read from them.
+
+## 1. Create a room profile config
+
+In `types` or `lib`, add something like:
+
+```ts
+// types/rooms.ts
+import type { SectionId } from "./index";
+
+export type MaterialTheme = "metalGlass" | "organic" | "neon" | "paper";
+
+export interface RoomProfile {
+  id: SectionId;
+  lightColor: string;
+  accentColor: string;
+  fogColor: string;
+  fogDensity: number;
+  motionIntensity: number; // 0–1
+  noiseLevel: number;      // 0–1
+  materialTheme: MaterialTheme;
+}
+
+export const ROOM_PROFILES: Record<SectionId, RoomProfile> = {
+  statement: {
+    id: "statement",
+    lightColor: "#F5F5F5",
+    accentColor: "#4A9EFF",
+    fogColor: "#050509",
+    fogDensity: 0.03,
+    motionIntensity: 0.3,
+    noiseLevel: 0.1,
+    materialTheme: "paper",
+  },
+  garden: {
+    id: "garden",
+    lightColor: "#B6FFDA",
+    accentColor: "#2ECC71",
+    fogColor: "#020408",
+    fogDensity: 0.05,
+    motionIntensity: 0.5,
+    noiseLevel: 0.2,
+    materialTheme: "organic",
+  },
+  portals: {
+    id: "portals",
+    lightColor: "#FFE8FF",
+    accentColor: "#9B59B6",
+    fogColor: "#050014",
+    fogDensity: 0.06,
+    motionIntensity: 0.8,
+    noiseLevel: 0.3,
+    materialTheme: "neon",
+  },
+  // ...fill out for journey, practices, connections, process, cases, rooms, footer, hero
+};
+```
+
+This gives each room a distinct mood but keeps the parameters consistent across the house. Guides on three.js realism and stylization recommend exactly this kind of small, controlled set of knobs for light, fog, and materials.[1][2][3]
+
+## 2. Wire profiles into Scene and UI
+
+- In `Scene`, import `ROOM_PROFILES` and pick the profile via `activeSection`; drive lights, fog, motion speeds, and material variants from it.[4][5]
+- In UI (headings, highlights, subtle gradients), use `accentColor` from the profile so each room’s text layer echoes its 3D mood without changing the base typography or layout.[6][7]
+
+Once that’s in place, any time you add or tweak a room you just edit its profile instead of scattering design decisions through the code, which keeps everything coherent while still letting you go wild inside each space.
+
+Sources
+[1] Making the scene more realistic - Questions - three.js forum https://discourse.threejs.org/t/making-the-scene-more-realistic/61051
+[2] Lights - Three.js Journey https://threejs-journey.com/lessons/lights
+[3] Mini tutorial on making Threejs look good/realistic - Resources https://discourse.threejs.org/t/mini-tutorial-on-making-threejs-look-good-realistic/47989
+[4] Examples - React Three Fiber https://r3f.docs.pmnd.rs/getting-started/examples
+[5] React Three Fiber: Introduction https://r3f.docs.pmnd.rs
+[6] Building a Tabs component | Articles - web.dev https://web.dev/articles/building/a-tabs-component
+[7] Ultimate Guide to Navigation in ReactJs - Angular Minds https://www.angularminds.com/blog/navigation-in-reactjs

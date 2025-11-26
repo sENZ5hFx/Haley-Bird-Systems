@@ -1,0 +1,52 @@
+You get that “Blender-in-a-browser” feeling by combining three things: physically based materials, good lighting/depth, and a strict design system for when to go photoreal vs. stylized.[1][2]
+
+## 3D depth that actually feels spatial
+
+- Use **camera + composition + depth effects**: a slightly offset perspective camera, foreground/midground/background objects, fog, and optional depth-of-field give instant depth cues, especially when tied to your `activeSection`.[3][4][5]
+- Add **shadows and contact**: turn on shadows for key meshes and use a shadow-receiving ground or contact plane; tutorials show that even simple soft shadows immediately push Three.js/R3F scenes out of “flat demo” territory.[6][7][8]
+- Consider **subtle postprocessing**: depth-of-field and fog via `@react-three/postprocessing` can make your rooms feel like lenses looking into a world instead of a flat canvas, as long as you keep effects gentle to avoid performance hits.[4][5][3]
+
+## Textures, materials, and “lived-in” surfaces
+
+- Use **PBR materials** (`meshStandardMaterial` with maps) for anything that should feel physical—color (albedo), normal, roughness, AO, and optionally displacement maps; R3F texture-loading docs show how to wire all of these via `useTexture`.[9][10][11]
+- For “lifelike” realism: pick or bake high-quality textures, pair color + normal + roughness correctly, and use linear color spaces for normal maps when needed to avoid artifacts.[12][13][9]
+- For “cyberpunk / cyberspace”: lean into emissive colors, fresnel-style rim light, and stylized shaders; shader guides with R3F show how to create atmospheric edge glows and custom materials that still sit on top of proper depth and lighting.[14][15]
+
+## Design system: when to go big, when to stay light
+
+- Define **where 3D earns its keep**: pick a few hero interactions or rooms where you go deep with geometry, textures, and lighting; elsewhere, use lighter, abstract geometry or particles so the site doesn’t feel visually or computationally noisy.[16][1]
+- Set **material tiers**:  
+  - Tier 1: fully PBR, shadows, maybe postprocessing (hero scenes, key “installations”).  
+  - Tier 2: lit but simpler materials (MeshStandard or MeshLambert, limited textures) for supporting elements.  
+  - Tier 3: unlit/emissive for UI-linked accents where performance and clarity matter most.[17][16]
+- Keep a **global mood Bible**: a palette of environments (e.g., “Garden dusk,” “Neon atrium,” “Soft studio”) that define light, fog, contrast, and motion per room so each space feels intentional rather than random.[8][9][16]
+
+## “Perfectly accessorized” without killing performance
+
+- Reuse **texture sets and material definitions** across rooms instead of creating everything from scratch; R3F examples show how far you can go with a small library of well-chosen assets.[11][1]
+- Use **instancing and simple geo** for repeated elements (orbs, particles, tiles) so you can fill space and imply richness without paying a per-mesh cost.[5][1][16]
+- Profile and tune: drop poly counts where normal maps can fake detail, and reserve the heaviest effects (high-res displacement, complex shaders) for the few places where they deliver emotional impact.[12][16]
+
+If you want to ground this, next step is: pick one room (e.g., “Garden”) and decide whether it should feel like a physical courtyard, a neon data-forest, or something else; then your material, light, and texture choices snap into place around that one clear mood.
+
+Sources
+[1] Examples - React Three Fiber https://r3f.docs.pmnd.rs/getting-started/examples
+[2] React Three Fiber: Introduction https://r3f.docs.pmnd.rs
+[3] Depth buffer (in depth): How to implement a fog post-processing ... https://blog.anaili.fr/articles/depth-buffer-fog
+[4] DepthOfField - React Postprocessing https://react-postprocessing.docs.pmnd.rs/effects/depth-of-field
+[5] Depth Of Field - React Three Fiber Tutorials https://sbcode.net/react-three-fiber/depth-of-field/
+[6] How to make 3D models more realistic in React Three Fiber without ... https://www.facebook.com/groups/threejs/posts/2397145003806147/
+[7] Three.js Realistic Lighting Setup Tutorial - YouTube https://www.youtube.com/watch?v=7GGNzryHfTw
+[8] Illuminating Your 3D Scenes: A Guide to Lights in Three.js https://dev.to/cloudysarah/illuminating-your-3d-scenes-a-guide-to-lights-in-threejs-93i
+[9] Lights - Three.js Journey https://threejs-journey.com/lessons/lights
+[10] 12c How to use PBR materials three.js - YouTube https://www.youtube.com/watch?v=kDpMryM5FsA
+[11] Loading Textures - React Three Fiber https://r3f.docs.pmnd.rs/tutorials/loading-textures
+[12] Displacement Maps, Normal Maps, and Textures in React Three Fiber https://codeworkshop.dev/blog/2020-11-05-displacement-maps-normal-maps-and-textures-in-react-three-fiber
+[13] Issue #3370 · pmndrs/react-three-fiber - GitHub https://github.com/pmndrs/react-three-fiber/issues/3370
+[14] The Study of Shaders with React Three Fiber - Maxime Heckel Blog https://blog.maximeheckel.com/posts/the-study-of-shaders-with-react-three-fiber/
+[15] Just rewrote my Custom-Shader-Material to work with react-three ... https://www.reddit.com/r/threejs/comments/sen4gi/just_rewrote_my_customshadermaterial_to_work_with/
+[16] Mini tutorial on making Threejs look good/realistic - Resources https://discourse.threejs.org/t/mini-tutorial-on-making-threejs-look-good-realistic/47989
+[17] React Three Fiber & Three.js - Materials Explained - YouTube https://www.youtube.com/watch?v=coc0DxZtMKc
+[18] Making the scene more realistic - Questions - three.js forum https://discourse.threejs.org/t/making-the-scene-more-realistic/61051
+[19] How to use baked textures with gltfjsx loader #1302 - GitHub https://github.com/pmndrs/react-three-fiber/discussions/1302
+[20] Depth Textures and World Coordinates In Fragment Shaders https://www.thefrontdev.co.uk/post-processing-in-react-three-fiber-depth-textures-and-world-coordinates-in-fragment-shaders/
