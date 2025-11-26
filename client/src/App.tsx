@@ -9,6 +9,7 @@ import { HeroSection } from "./components/sections/HeroSection";
 import { StatementSection } from "./components/sections/StatementSection";
 import { PortalsSection } from "./components/sections/PortalsSection";
 import { RoomsSection } from "./components/sections/RoomsSection";
+import { CaseStudiesSection } from "./components/sections/CaseStudiesSection";
 import { FooterSection } from "./components/sections/FooterSection";
 import "@fontsource/inter";
 
@@ -61,6 +62,7 @@ function App() {
         <StatementSection />
         <PortalsSection />
         <RoomsSection />
+        <CaseStudiesSection />
         <FooterSection />
       </main>
       

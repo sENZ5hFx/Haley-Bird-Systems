@@ -74,7 +74,8 @@ export const useSpatialAudio = create<SpatialAudioState>((set, get) => ({
       src: [url],
       volume: options.volume ?? 0.5,
       loop: options.loop ?? true,
-      html5: true
+      html5: false,
+      preload: false
     });
     
     const newSource: AudioSource = {
