@@ -1,7 +1,8 @@
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useEffect, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useExperience } from '@/lib/stores/useExperience';
+import { detectDeviceCapability, getQualitySettings } from '@/lib/utils/deviceCapability';
 
 interface ParticleFieldProps {
   count?: number;
@@ -9,13 +10,26 @@ interface ParticleFieldProps {
   spread?: number;
 }
 
-export function ParticleField({ count = 2000, size = 0.015, spread = 15 }: ParticleFieldProps) {
+export function ParticleField({ count = 3000, size = 0.015, spread = 15 }: ParticleFieldProps) {
+  const [adaptiveCount, setAdaptiveCount] = useState(count);
+  const [adaptiveSize, setAdaptiveSize] = useState(size);
+
+  // Adaptive quality on mount
+  useEffect(() => {
+    const capability = detectDeviceCapability();
+    const quality = getQualitySettings(capability);
+    setAdaptiveCount(quality.particleCount);
+    setAdaptiveSize(quality.particleSize);
+  }, []);
+
+  const effectiveCount = adaptiveCount;
+  const effectiveSize = adaptiveSize;
   const pointsRef = useRef<THREE.Points>(null);
   const getState = useExperience.getState;
   
   const positions = useMemo(() => {
-    const pos = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
+    const pos = new Float32Array(effectiveCount * 3);
+    for (let i = 0; i < effectiveCount; i++) {
       const i3 = i * 3;
       const radius = Math.random() * spread;
       const theta = Math.random() * Math.PI * 2;
@@ -26,15 +40,15 @@ export function ParticleField({ count = 2000, size = 0.015, spread = 15 }: Parti
       pos[i3 + 2] = radius * Math.cos(phi);
     }
     return pos;
-  }, [count, spread]);
+  }, [effectiveCount, spread]);
   
   const velocities = useMemo(() => {
-    const vel = new Float32Array(count * 3);
-    for (let i = 0; i < count * 3; i++) {
+    const vel = new Float32Array(effectiveCount * 3);
+    for (let i = 0; i < effectiveCount * 3; i++) {
       vel[i] = (Math.random() - 0.5) * 0.002;
     }
     return vel;
-  }, [count]);
+  }, [effectiveCount]);
   
   const originalPositions = useMemo(() => new Float32Array(positions), [positions]);
   
@@ -47,7 +61,7 @@ export function ParticleField({ count = 2000, size = 0.015, spread = 15 }: Parti
     const positionAttribute = geometry.attributes.position;
     const posArray = positionAttribute.array as Float32Array;
     
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < effectiveCount; i++) {
       const i3 = i * 3;
       
       const originalX = originalPositions[i3];
@@ -79,13 +93,13 @@ export function ParticleField({ count = 2000, size = 0.015, spread = 15 }: Parti
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
-          count={count}
+          count={effectiveCount}
           array={positions}
           itemSize={3}
         />
       </bufferGeometry>
       <pointsMaterial
-        size={size}
+        size={effectiveSize}
         color="#F5F5F5"
         transparent
         opacity={0.6}

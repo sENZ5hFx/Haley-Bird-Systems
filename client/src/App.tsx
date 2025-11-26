@@ -1,5 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-import { Suspense, useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef, lazy } from "react";
 import { useExperience } from "./lib/stores/useExperience";
 import { Scene } from "./components/three/Scene";
 import { CustomCursor } from "./components/CustomCursor";
@@ -7,15 +7,30 @@ import { LoadingScreen } from "./components/LoadingScreen";
 import { SoundToggle } from "./components/SoundToggle";
 import { HeroSection } from "./components/sections/HeroSection";
 import { StatementSection } from "./components/sections/StatementSection";
-import { PortalsSection } from "./components/sections/PortalsSection";
-import { RoomsSection } from "./components/sections/RoomsSection";
-import { CaseStudiesSection } from "./components/sections/CaseStudiesSection";
-import { FooterSection } from "./components/sections/FooterSection";
+import { trackWebVitals } from "./lib/utils/performanceMonitoring";
 import "@fontsource/inter";
+
+// Lazy load heavy sections
+const PortalsSection = lazy(() => import("./components/sections/PortalsSection").then(m => ({ default: m.PortalsSection })));
+const RoomsSection = lazy(() => import("./components/sections/RoomsSection").then(m => ({ default: m.RoomsSection })));
+const CaseStudiesSection = lazy(() => import("./components/sections/CaseStudiesSection").then(m => ({ default: m.CaseStudiesSection })));
+const FooterSection = lazy(() => import("./components/sections/FooterSection").then(m => ({ default: m.FooterSection })));
 
 function App() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { setScrollProgress } = useExperience();
+  
+  useEffect(() => {
+    // Register service worker for offline support and caching
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(err => 
+        console.log('SW registration failed:', err)
+      );
+    }
+
+    // Track Core Web Vitals
+    trackWebVitals();
+  }, []);
   
   useEffect(() => {
     const handleScroll = () => {
@@ -60,10 +75,12 @@ function App() {
       <main className="content-layer" style={{ position: 'relative' }}>
         <HeroSection />
         <StatementSection />
-        <PortalsSection />
-        <RoomsSection />
-        <CaseStudiesSection />
-        <FooterSection />
+        <Suspense fallback={null}>
+          <PortalsSection />
+          <RoomsSection />
+          <CaseStudiesSection />
+          <FooterSection />
+        </Suspense>
       </main>
       
       <SoundToggle />
