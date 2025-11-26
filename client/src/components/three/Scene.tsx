@@ -8,6 +8,7 @@ import { AtmosphericLights } from './AtmosphericLights';
 import { GenerativeBackground } from './GenerativeBackground';
 import { RoomVisualization } from './RoomVisualization';
 import { NotionContentDisplay } from './NotionContentDisplay';
+import { SpatialAudioController } from './SpatialAudioController';
 import { GodRays, ChromaticAberration, FilmGrain } from './AdvancedEffects';
 
 export function Scene() {
@@ -17,6 +18,7 @@ export function Scene() {
       <fog attach="fog" args={['#1A1A1A', 10, 50]} />
       
       <AtmosphericLights />
+      <SpatialAudioController />
       
       <Suspense fallback={null}>
         <GenerativeBackground />
