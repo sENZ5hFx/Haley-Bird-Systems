@@ -7,6 +7,7 @@ import { AudiencePortals } from './AudiencePortals';
 import { AtmosphericLights } from './AtmosphericLights';
 import { GenerativeBackground } from './GenerativeBackground';
 import { RoomVisualization } from './RoomVisualization';
+import { NotionContentDisplay } from './NotionContentDisplay';
 import { GodRays, ChromaticAberration, FilmGrain } from './AdvancedEffects';
 
 export function Scene() {
@@ -24,6 +25,7 @@ export function Scene() {
         <FloatingGeometry />
         <AudiencePortals />
         <RoomVisualization />
+        <NotionContentDisplay />
       </Suspense>
       
       <EffectComposer>
