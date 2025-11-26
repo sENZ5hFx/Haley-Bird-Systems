@@ -5,6 +5,7 @@ import { SystemsVisualization } from './SystemsVisualization';
 import { FloatingGeometry } from './FloatingGeometry';
 import { AudiencePortals } from './AudiencePortals';
 import { AtmosphericLights } from './AtmosphericLights';
+import { GenerativeBackground } from './GenerativeBackground';
 import { GodRays, ChromaticAberration, FilmGrain } from './AdvancedEffects';
 
 export function Scene() {
@@ -16,6 +17,7 @@ export function Scene() {
       <AtmosphericLights />
       
       <Suspense fallback={null}>
+        <GenerativeBackground />
         <ParticleField count={3000} size={0.01} spread={20} />
         <SystemsVisualization />
         <FloatingGeometry />
