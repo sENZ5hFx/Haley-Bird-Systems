@@ -8,6 +8,7 @@ import { SoundToggle } from "./components/SoundToggle";
 import { HeroSection } from "./components/sections/HeroSection";
 import { StatementSection } from "./components/sections/StatementSection";
 import { PortalsSection } from "./components/sections/PortalsSection";
+import { RoomsSection } from "./components/sections/RoomsSection";
 import { FooterSection } from "./components/sections/FooterSection";
 import "@fontsource/inter";
 
@@ -59,6 +60,7 @@ function App() {
         <HeroSection />
         <StatementSection />
         <PortalsSection />
+        <RoomsSection />
         <FooterSection />
       </main>
       

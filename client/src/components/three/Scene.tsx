@@ -6,6 +6,7 @@ import { FloatingGeometry } from './FloatingGeometry';
 import { AudiencePortals } from './AudiencePortals';
 import { AtmosphericLights } from './AtmosphericLights';
 import { GenerativeBackground } from './GenerativeBackground';
+import { RoomVisualization } from './RoomVisualization';
 import { GodRays, ChromaticAberration, FilmGrain } from './AdvancedEffects';
 
 export function Scene() {
@@ -22,6 +23,7 @@ export function Scene() {
         <SystemsVisualization />
         <FloatingGeometry />
         <AudiencePortals />
+        <RoomVisualization />
       </Suspense>
       
       <EffectComposer>
