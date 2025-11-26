@@ -1,11 +1,11 @@
 import { Suspense } from 'react';
-import { Environment } from '@react-three/drei';
-import { EffectComposer, Bloom, Noise, Vignette } from '@react-three/postprocessing';
+import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import { ParticleField } from './ParticleField';
 import { SystemsVisualization } from './SystemsVisualization';
 import { FloatingGeometry } from './FloatingGeometry';
 import { AudiencePortals } from './AudiencePortals';
 import { AtmosphericLights } from './AtmosphericLights';
+import { GodRays, ChromaticAberration, FilmGrain } from './AdvancedEffects';
 
 export function Scene() {
   return (
@@ -29,7 +29,9 @@ export function Scene() {
           luminanceSmoothing={0.9}
           mipmapBlur
         />
-        <Noise opacity={0.02} />
+        <GodRays />
+        <ChromaticAberration />
+        <FilmGrain />
         <Vignette offset={0.3} darkness={0.6} />
       </EffectComposer>
     </>
