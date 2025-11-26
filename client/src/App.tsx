@@ -1,31 +1,52 @@
+/**
+ * Main App Component - Room-Based Navigation Model
+ * 
+ * Architecture:
+ * - Hero + 3D Scene: Always visible at top (immersive entry)
+ * - Navigation: Only ONE content section visible at a time (room-switching, not scrolling)
+ * - State: activeSection controls which room is displayed
+ * - Ambience: Scene mood shifts based on activeSection
+ * 
+ * This replaces endless scroll with discrete, immersive "rooms" you step into.
+ */
+
 import { Canvas } from "@react-three/fiber";
-import { Suspense, useEffect, useRef, lazy } from "react";
+import { Suspense, useEffect, useRef, lazy, useState } from "react";
 import { useExperience } from "./lib/stores/useExperience";
 import { Scene } from "./components/three/Scene";
 import { CustomCursor } from "./components/CustomCursor";
 import { LoadingScreen } from "./components/LoadingScreen";
 import { SoundToggle } from "./components/SoundToggle";
 import { HeroSection } from "./components/sections/HeroSection";
-import { StatementSection } from "./components/sections/StatementSection";
 import { trackWebVitals } from "./lib/utils/performanceMonitoring";
+import { SectionId } from "./types";
 import "@fontsource/inter";
 
-// Lazy load heavy sections
+// Lazy load room sections to keep initial bundle small
+const StatementSection = lazy(() => import("./components/sections/StatementSection").then(m => ({ default: m.StatementSection })));
 const PortalsSection = lazy(() => import("./components/sections/PortalsSection").then(m => ({ default: m.PortalsSection })));
-const SensoryTabs = lazy(() => import("./components/SensoryTabs").then(m => ({ default: m.SensoryTabs })));
+const PersonalJourney = lazy(() => import("./components/sections/PersonalJourney").then(m => ({ default: m.PersonalJourney })));
 const GardenNav = lazy(() => import("./components/sections/GardenNav").then(m => ({ default: m.GardenNav })));
 const PracticesSection = lazy(() => import("./components/sections/PracticesSection").then(m => ({ default: m.PracticesSection })));
-const PersonalJourney = lazy(() => import("./components/sections/PersonalJourney").then(m => ({ default: m.PersonalJourney })));
-const ProcessDocumentation = lazy(() => import("./components/sections/ProcessDocumentation").then(m => ({ default: m.ProcessDocumentation })));
 const InteractiveConnections = lazy(() => import("./components/sections/InteractiveConnections").then(m => ({ default: m.InteractiveConnections })));
+const ProcessDocumentation = lazy(() => import("./components/sections/ProcessDocumentation").then(m => ({ default: m.ProcessDocumentation })));
 const CaseStudiesSection = lazy(() => import("./components/sections/CaseStudiesSection").then(m => ({ default: m.CaseStudiesSection })));
 const RoomsSection = lazy(() => import("./components/sections/RoomsSection").then(m => ({ default: m.RoomsSection })));
 const FooterSection = lazy(() => import("./components/sections/FooterSection").then(m => ({ default: m.FooterSection })));
 
 function App() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { setScrollProgress } = useExperience();
+  const { setActiveSection, activeSection: storeActiveSection } = useExperience();
   
+  // Local activeSection state - this is the "room selector"
+  // Starts at 'statement' (first room after hero)
+  const [activeSection, setLocalActiveSection] = useState<SectionId>('statement');
+  
+  // Sync with store for other parts of the app that might need it
+  useEffect(() => {
+    setActiveSection(activeSection);
+  }, [activeSection, setActiveSection]);
+
   useEffect(() => {
     // Register service worker for offline support and caching
     if ('serviceWorker' in navigator) {
@@ -37,27 +58,41 @@ function App() {
     // Track Core Web Vitals
     trackWebVitals();
   }, []);
-  
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = docHeight > 0 ? scrollTop / docHeight : 0;
-      
-      setScrollProgress(Math.min(1, Math.max(0, progress)));
+
+  // Map section to component for dynamic rendering
+  // Only render one room at a time after hero
+  const renderActiveSection = () => {
+    const roomMap: Record<SectionId, React.ComponentType<{ onSectionChange?: (id: SectionId) => void }>> = {
+      'statement': StatementSection,
+      'portals': PortalsSection,
+      'journey': PersonalJourney,
+      'garden': GardenNav,
+      'practices': PracticesSection,
+      'connections': InteractiveConnections,
+      'process': ProcessDocumentation,
+      'cases': CaseStudiesSection,
+      'rooms': RoomsSection,
+      'footer': FooterSection,
+      'hero': () => null, // Hero rendered separately
     };
-    
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [setScrollProgress]);
+
+    const Component = roomMap[activeSection];
+    if (!Component) return null;
+
+    return (
+      <Suspense fallback={<div className="min-h-screen" />}>
+        <Component onSectionChange={setLocalActiveSection} />
+      </Suspense>
+    );
+  };
   
   return (
     <div ref={containerRef} style={{ position: 'relative' }}>
       <LoadingScreen />
       <CustomCursor />
       
-      <div className="canvas-container">
+      {/* Shared 3D environment - always visible, mood adapts to active section */}
+      <div className="canvas-container fixed inset-0 pointer-events-none z-0">
         <Canvas
           camera={{
             position: [0, 0, 15],
@@ -73,26 +108,20 @@ function App() {
           dpr={[1, 2]}
         >
           <Suspense fallback={null}>
-            <Scene />
+            <Scene activeSection={activeSection} />
           </Suspense>
         </Canvas>
       </div>
       
-      <main className="content-layer" style={{ position: 'relative' }}>
-        <HeroSection />
-        <StatementSection />
-        <Suspense fallback={null}>
-          <PortalsSection />
-          <SensoryTabs />
-          <PersonalJourney />
-          <GardenNav />
-          <PracticesSection />
-          <InteractiveConnections />
-          <ProcessDocumentation />
-          <CaseStudiesSection />
-          <RoomsSection />
-          <FooterSection />
-        </Suspense>
+      {/* Content layer - room-based navigation, not scroll-based */}
+      <main className="content-layer relative z-10" style={{ position: 'relative' }}>
+        {/* Hero: always shown, acts as entry point to navigate between rooms */}
+        <HeroSection onEnter={() => setLocalActiveSection('statement')} />
+        
+        {/* Active Room: only one visible at a time */}
+        <div className="min-h-screen flex items-center justify-center">
+          {renderActiveSection()}
+        </div>
       </main>
       
       <SoundToggle />

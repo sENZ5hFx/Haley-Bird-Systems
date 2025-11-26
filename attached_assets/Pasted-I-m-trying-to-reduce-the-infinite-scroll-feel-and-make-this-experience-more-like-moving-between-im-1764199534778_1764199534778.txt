@@ -1,0 +1,17 @@
+I’m trying to reduce the “infinite scroll” feel and make this experience more like moving between immersive “rooms” or installations, not just scrolling down a long page. Please:
+1.	Implement controlled section switching (no more stacked sections)
+•	Add `activeSection` state in `App.tsx` (as you already started) and render only one major section at a time (Statement, Journey, Process, Connections, etc.) instead of stacking them all.
+•	Keep the 3D scene and hero at the top as a persistent “environment,” but everything after that should be driven by `activeSection`, not vertical scrolling.
+1.	Turn `SensoryTabs` into the primary room navigator
+•	Make `SensoryTabs` a controlled component with `activeSection` and `onSectionChange` props from `App.tsx`.
+•	Use it as the main way to switch which section is visible, while keeping its current sensory design (colors, tones, animations) so that tab changes feel like stepping into different rooms.
+•	Map specific tabs or controls inside `SensoryTabs` to the main sections (e.g., Signal → Statement, Trails → PersonalJourney, Making → ProcessDocumentation, Touchpoints → InteractiveConnections, etc.) and wire those to `onSectionChange`.
+1.	Trim content per “room” to 1–2 screens max
+•	For each section, keep an immediate payoff above the fold (title + 3–5 concise bullets or cards) and move longer explanations into expandable / secondary elements so users are not forced to scroll far inside a single room.
+•	Adjust headings and microcopy so each section feels like a space you enter (e.g., “Trails Through the Work” instead of a generic label).
+1.	Tie scene + ambience to `activeSection`
+•	Expose `activeSection` to the 3D `Scene` and lightly change ambience per room (color tint, particle density, motion intensity) so switching sections feels like the environment breathing or shifting, not like changing pages. Keep these changes subtle so performance stays good.
+1.	Performance + interaction polish (if cycles allow)
+•	Make sure animations in `SensoryTabs` and the section transitions remain smooth (use Framer Motion’s layout / shared element transitions if helpful).
+•	Verify that mobile still feels light and that there are no major layout shifts when switching sections.
+Please implement all of this in one pass and then show me the updated `App.tsx`, `SensoryTabs.tsx`, and any key section components you refactor so I can tune the copy and interaction details myself.

@@ -1,0 +1,20 @@
+I want to refactor this project so it stops being a long scrolling page and instead feels like moving between immersive “rooms.” Please do the following in one pass, creating any missing files/sections as needed:
+1.	Core navigation: controlled sections instead of stacking
+•	In `client/src/App.tsx`, introduce an `activeSection` state (type union of section IDs) and render only one major section at a time after the hero.
+•	Keep the 3D `Scene` and `HeroSection` as a shared environment at the top, but remove the current pattern where `StatementSection`, `PortalsSection`, `PersonalJourney`, `PracticesSection`, `InteractiveConnections`, `ProcessDocumentation`, `CaseStudiesSection`, `RoomsSection`, and `FooterSection` are all stacked vertically.
+•	If any of these sections do not exist yet, create placeholder components for them under `client/src/components/sections/` with minimal but sensible content.
+1.	Make `SensoryTabs` the primary “room switcher”
+•	Turn `SensoryTabs` into a controlled component: it should accept `activeSection` and `onSectionChange` props from `App.tsx`.
+•	Wire the tabs / controls inside `SensoryTabs` so they change `activeSection` (e.g., tabs or buttons that map to Statement, Journey, Process, Connections, Cases, Rooms, etc.).
+•	Keep and polish its current sensory behavior (colors, tones, gradients, animations) so switching tabs feels like stepping into a different room, not just flipping a boring tab.
+1.	Section layout and content density
+•	For every section component, constrain the default view to about 1–2 screens of content max: a strong heading, subheading, and 3–5 concise bullets/cards. Move any heavier narrative text into collapsible/expandable areas or secondary elements so users never have to scroll very far within a single room.
+•	Adjust headings and microcopy so each section feels like a space: e.g., “Signal / Orientation” for statement, “Trails Through the Work” for process/journey, “Touchpoints” for connections, etc. You can create or tweak placeholder copy that matches this vibe if something is missing.
+1.	Connect ambience to `activeSection`
+•	Pass `activeSection` down into the 3D `Scene` (and any related visual systems) so color tint, light intensity, or particle behavior can shift subtly per room. Keep the changes lightweight and performance-aware, but noticeable enough that each section has its own “mood.”
+•	Ensure this works well on mobile (no huge performance hit, no layout thrash).
+1.	General polish and missing pieces
+•	Make sure routing/state is purely client-side (no full-page reloads when switching rooms).
+•	Ensure TypeScript types are correct for `SectionId`, `SensoryTabs` props, and any new section components you create.
+•	If any obvious “supporting pages” or components are missing (e.g., a minimal `RoomsSection`, `CaseStudiesSection`, or `FooterSection`), create them with simple, clean layouts and placeholder text that I can later edit.
+When you’re done, please show me the updated `App.tsx`, `SensoryTabs.tsx`, and any new/modified section files so I can refine text, microcopy, and interactions myself.

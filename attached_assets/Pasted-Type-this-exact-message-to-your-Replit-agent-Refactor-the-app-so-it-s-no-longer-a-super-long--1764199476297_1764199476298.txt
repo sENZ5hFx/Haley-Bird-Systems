@@ -1,0 +1,137 @@
+Type this exact message to your Replit agent:
+
+***
+
+Refactor the app so it’s no longer a super-long scrolling page and instead uses `SensoryTabs` as the primary “room switcher” navigation.
+
+Do the following changes explicitly:
+
+1. **App.tsx – introduce activeSection and conditional sections**
+
+- In `client/src/App.tsx`, import `useState` from React:
+
+```ts
+import { Suspense, useEffect, useRef, lazy, useState } from "react";
+```
+
+- Define a `SectionId` type above `function App()`:
+
+```ts
+type SectionId =
+  | "hero"
+  | "statement"
+  | "portals"
+  | "journey"
+  | "garden"
+  | "practices"
+  | "connections"
+  | "process"
+  | "cases"
+  | "rooms"
+  | "footer";
+```
+
+- Inside `App`, add React state:
+
+```ts
+const [activeSection, setActiveSection] = useState<SectionId>("hero");
+```
+
+- In the `<main>` element, stop rendering every section in a long list.  
+Replace the current `<main>` contents with this:
+
+```tsx
+<main className="content-layer relative min-h-screen flex flex-col items-center">
+  <HeroSection />
+
+  <Suspense fallback={null}>
+    <SensoryTabs
+      activeSection={activeSection}
+      onSectionChange={setActiveSection}
+    />
+
+    {activeSection === "statement" && <StatementSection />}
+    {activeSection === "portals" && <PortalsSection />}
+    {activeSection === "journey" && <PersonalJourney />}
+    {activeSection === "garden" && <GardenNav />}
+    {activeSection === "practices" && <PracticesSection />}
+    {activeSection === "connections" && <InteractiveConnections />}
+    {activeSection === "process" && <ProcessDocumentation />}
+    {activeSection === "cases" && <CaseStudiesSection />}
+    {activeSection === "rooms" && <RoomsSection />}
+    {activeSection === "footer" && <FooterSection />}
+  </Suspense>
+</main>
+```
+
+2. **SensoryTabs.tsx – make it a controlled navigator**
+
+- Change the top of `SensoryTabs.tsx` to accept props instead of using its own `useState` for the active tab.
+
+Add these types:
+
+```ts
+type SectionId =
+  | "statement"
+  | "portals"
+  | "journey"
+  | "garden"
+  | "practices"
+  | "connections"
+  | "process"
+  | "cases"
+  | "rooms"
+  | "footer";
+
+interface SensoryTabsProps {
+  activeSection: SectionId;
+  onSectionChange: (id: SectionId) => void;
+}
+```
+
+- Change the component signature from:
+
+```ts
+export function SensoryTabs() {
+  const [activeTab, setActiveTab] = useState<TabType>('seeds');
+```
+
+to:
+
+```ts
+export function SensoryTabs({ activeSection, onSectionChange }: SensoryTabsProps) {
+  const [activeTab, setActiveTab] = useState<TabType>('seeds');
+```
+
+(keep the tab-specific state for seeds/saplings/fruits if you want, but the **section navigation** will come from the new props.)
+
+- Wherever `SensoryTabs` currently decides visual emphasis for the whole section (for example, which “mode” is shown), also call `onSectionChange` so it switches the main page section.
+
+For now, add simple buttons at the top of `SensoryTabs` that switch sections:
+
+```tsx
+<div className="flex gap-3 mb-8 justify-center flex-wrap">
+  <button onClick={() => onSectionChange("statement")} className="px-4 py-2 text-sm border border-white/20 rounded-full">
+    Signal
+  </button>
+  <button onClick={() => onSectionChange("journey")} className="px-4 py-2 text-sm border border-white/20 rounded-full">
+    Trails
+  </button>
+  <button onClick={() => onSectionChange("process")} className="px-4 py-2 text-sm border border-white/20 rounded-full">
+    Making
+  </button>
+  <button onClick={() => onSectionChange("connections")} className="px-4 py-2 text-sm border border-white/20 rounded-full">
+    Touchpoints
+  </button>
+</div>
+```
+
+You can style and animate these later, but this immediately turns `SensoryTabs` into the “room chooser” and stops the page from requiring endless scroll.
+
+3. **Optional: keep scroll tracking but it’s no longer critical**
+
+Leave the existing scroll progress logic for now; after this refactor, scrolling will be lighter, and `activeSection` will be the main way users move through the experience.
+
+Please implement all of the above changes and then show me the updated `App.tsx` and `SensoryTabs.tsx` so I can iterate on the copy and interactions.
+
+Sources
