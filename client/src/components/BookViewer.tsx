@@ -1,22 +1,19 @@
 /**
  * Book Viewer Component - "The Broken Transmission"
- * 
- * Multi-perspective reading experience:
- * - Read normally (perspective 1)
- * - Flip/rotate view (perspective 2)
- * - Switch between readings seamlessly
+ * Multi-perspective reading experience
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 
+interface Perspective {
+  label: string;
+  content: string;
+}
+
 interface BookViewerProps {
   title: string;
-  perspectives: Array<{
-    label: string;
-    content: string;
-    transform?: string;
-  }>;
+  perspectives: Perspective[];
   initialPerspective?: number;
 }
 
@@ -29,16 +26,15 @@ export function BookViewer({
   const [isFlipped, setIsFlipped] = useState(false);
 
   const current = perspectives[currentPerspective];
+  if (!current) return null;
 
   return (
     <div className="space-y-6 w-full">
-      {/* Header */}
       <div className="text-center space-y-2">
         <h2 className="text-3xl font-light text-white">{title}</h2>
         <p className="text-sm text-gray-400">Multi-perspective reading</p>
       </div>
 
-      {/* Perspective Selector */}
       <div className="flex gap-3 justify-center flex-wrap">
         {perspectives.map((perspective, idx) => (
           <button
@@ -58,7 +54,6 @@ export function BookViewer({
         ))}
       </div>
 
-      {/* Book Display */}
       <AnimatePresence mode="wait">
         <motion.div
           key={`${currentPerspective}-${isFlipped}`}
@@ -66,41 +61,26 @@ export function BookViewer({
           animate={{
             opacity: 1,
             rotateZ: isFlipped ? 180 : 0,
-            rotateX: isFlipped ? 180 : 0,
           }}
           exit={{ opacity: 0, rotateZ: 5 }}
           transition={{ duration: 0.6, ease: 'easeInOut' }}
           className="bg-gradient-to-br from-white/10 to-white/5 rounded-lg p-8 border border-white/20 backdrop-blur-sm min-h-96"
-          style={{
-            transformStyle: 'preserve-3d',
-            perspective: '1200px',
-          }}
         >
-          {/* Flip Icon */}
           <div className="flex justify-end mb-4">
             <button
               onClick={() => setIsFlipped(!isFlipped)}
-              className="text-xs text-gray-400 hover:text-white transition px-3 py-1 rounded border border-white/10 hover:border-white/30 hover:bg-white/5"
+              className="text-xs text-gray-400 hover:text-white transition px-3 py-1 rounded border border-white/10 hover:border-white/30"
               title={isFlipped ? 'Flip back' : 'Flip to alternate reading'}
             >
               {isFlipped ? '↻ Flip back' : '↺ Flip view'}
             </button>
           </div>
 
-          {/* Content with optional transform */}
           <div
-            style={
-              isFlipped
-                ? {
-                    transform: 'rotateX(180deg) rotateZ(180deg)',
-                    transformStyle: 'preserve-3d',
-                  }
-                : undefined
-            }
+            style={isFlipped ? { transform: 'rotateZ(180deg)', transformOrigin: 'center' } : undefined}
             className="prose prose-invert max-w-none text-sm leading-relaxed text-gray-300"
           >
             {current.content.split('\n').map((paragraph, idx) => {
-              // Preserve markdown-like structure
               if (paragraph.startsWith('#')) {
                 const level = paragraph.match(/^#+/)?.[0].length || 1;
                 const text = paragraph.replace(/^#+\s/, '');
@@ -129,7 +109,6 @@ export function BookViewer({
             })}
           </div>
 
-          {/* Perspective Label */}
           <div className="mt-8 pt-6 border-t border-white/10 text-xs text-gray-500 text-center">
             Viewing: <strong>{current.label}</strong>
             {isFlipped && ' (flipped)'}
@@ -137,10 +116,9 @@ export function BookViewer({
         </motion.div>
       </AnimatePresence>
 
-      {/* Info */}
       <div className="text-xs text-gray-500 bg-white/5 rounded p-3 border border-white/10">
-        💡 This book can be read from multiple perspectives. Switch perspectives above or flip
-        the current view to discover alternate readings and meanings.
+        💡 This book can be read from multiple perspectives. Switch above or flip the current view to
+        discover alternate readings.
       </div>
     </div>
   );
