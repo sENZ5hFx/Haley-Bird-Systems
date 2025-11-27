@@ -135,6 +135,7 @@ async function getPageContent(notion: Client, pageId: string): Promise<string> {
 
 /**
  * Organize pages by database/structure
+ * Now more inclusive - captures all pages and categorizes by keywords or defaults to "thinking"
  */
 function organizeContent(pages: any[]): RoomContent {
   const content: RoomContent = {
@@ -146,18 +147,28 @@ function organizeContent(pages: any[]): RoomContent {
   };
 
   pages.forEach((page: any) => {
-    const title = page.properties?.title?.title?.[0]?.plain_text || page.properties?.Name?.title?.[0]?.plain_text || 'Untitled';
+    const title = page.properties?.title?.title?.[0]?.plain_text || 
+                  page.properties?.Name?.title?.[0]?.plain_text || 
+                  page.properties?.Title?.title?.[0]?.plain_text ||
+                  'Untitled';
     const url = page.url || '';
+    
+    if (!title || title === 'Untitled' || title.length === 0) return; // Skip untitled/empty
 
-    // Look for patterns in title/content to categorize
-    if (title.toLowerCase().includes('practice') || title.toLowerCase().includes('ritual')) {
-      content.practices?.push({ title, url, type: 'practice' });
-    } else if (title.toLowerCase().includes('case') || title.toLowerCase().includes('project')) {
-      content.cases?.push({ title, url, type: 'case' });
-    } else if (title.toLowerCase().includes('journey') || title.toLowerCase().includes('personal')) {
-      content.journey?.push({ title, url, type: 'entry' });
-    } else if (title.toLowerCase().includes('connection') || title.toLowerCase().includes('system')) {
-      content.connections?.push({ title, url, type: 'connection' });
+    const lowerTitle = title.toLowerCase();
+
+    // Categorize by keyword patterns
+    if (lowerTitle.includes('practice') || lowerTitle.includes('ritual') || lowerTitle.includes('method')) {
+      content.practices?.push({ title, url, type: 'practice', id: page.id });
+    } else if (lowerTitle.includes('case') || lowerTitle.includes('project') || lowerTitle.includes('work') || lowerTitle.includes('study')) {
+      content.cases?.push({ title, url, type: 'case', id: page.id });
+    } else if (lowerTitle.includes('journey') || lowerTitle.includes('personal') || lowerTitle.includes('essay') || lowerTitle.includes('reflection')) {
+      content.journey?.push({ title, url, type: 'entry', id: page.id });
+    } else if (lowerTitle.includes('connection') || lowerTitle.includes('system') || lowerTitle.includes('network') || lowerTitle.includes('thinking')) {
+      content.connections?.push({ title, url, type: 'connection', id: page.id });
+    } else {
+      // Default: add everything else as "thinking" content
+      content.connections?.push({ title, url, type: 'connection', id: page.id });
     }
   });
 
