@@ -15,6 +15,7 @@ import { Suspense, useEffect, useRef, lazy, useState } from "react";
 import { useExperience } from "./lib/stores/useExperience";
 import { InteractiveRoomEnvironment } from "./components/three/InteractiveRoomEnvironment";
 import { RoomContentOverlay } from "./components/RoomContentOverlay";
+import { NavigationUI } from "./components/NavigationUI";
 import { CustomCursor } from "./components/CustomCursor";
 import { LoadingScreen } from "./components/LoadingScreen";
 import { SoundToggle } from "./components/SoundToggle";
@@ -40,6 +41,7 @@ function App() {
   // Hero shown initially, then environment + rooms
   const [showHero, setShowHero] = useState(true);
   const [selectedRoom, setSelectedRoom] = useState<SectionId | null>(null);
+  const [visitedRooms, setVisitedRooms] = useState<Set<SectionId>>(new Set());
 
   useEffect(() => {
     if ('serviceWorker' in navigator) {
@@ -48,7 +50,16 @@ function App() {
       );
     }
     trackWebVitals();
-  }, []);
+    
+    // Close room on ESC key
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedRoom) {
+        setSelectedRoom(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedRoom]);
 
   // Room content mapper
   const getRoomContent = () => {
@@ -80,6 +91,14 @@ function App() {
   const handleRoomSelect = (roomId: SectionId) => {
     setSelectedRoom(roomId);
     setActiveSection(roomId);
+    // Track visited rooms
+    setVisitedRooms(prev => new Set([...prev, roomId]));
+  };
+  
+  const handleCloseRoom = () => setSelectedRoom(null);
+  const handleBackToHome = () => {
+    setShowHero(true);
+    setSelectedRoom(null);
   };
 
   return (
@@ -109,6 +128,16 @@ function App() {
         </Canvas>
       </div>
 
+      {/* Navigation UI - Always visible when not in hero */}
+      {!showHero && (
+        <NavigationUI
+          currentRoom={selectedRoom}
+          onBack={handleCloseRoom}
+          onHome={handleBackToHome}
+          visitedRooms={visitedRooms}
+        />
+      )}
+
       {/* Hero Section Overlay */}
       {showHero && (
         <div className="fixed inset-0 z-20 pointer-events-auto">
@@ -120,7 +149,7 @@ function App() {
       {selectedRoom && !showHero && (
         <RoomContentOverlay 
           roomId={selectedRoom} 
-          onClose={() => setSelectedRoom(null)}
+          onClose={handleCloseRoom}
         >
           {getRoomContent()}
         </RoomContentOverlay>

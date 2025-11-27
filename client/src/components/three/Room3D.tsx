@@ -34,18 +34,20 @@ export function Room3D({ id, position, color, label, onSelect }: Room3DProps) {
       }
     }
 
-    // Smooth scale animation
-    if (boxRef.current) {
+    // Smooth scale animation with lerp
+    if (boxRef.current && boxRef.current.scale) {
       const targetScale = hovered ? 1.15 : 1;
-      boxRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1);
+      const current = boxRef.current.scale.x;
+      const next = current + (targetScale - current) * 0.1;
+      boxRef.current.scale.set(next, next, next);
     }
 
-    // Enhanced glow effect
-    if (glowRef.current) {
-      glowRef.current.scale.lerp(
-        new THREE.Vector3(hovered ? 1.8 : 1.3, hovered ? 1.8 : 1.3, hovered ? 1.8 : 1.3),
-        0.08
-      );
+    // Enhanced glow effect with safe material check
+    if (glowRef.current && glowRef.current.material instanceof THREE.MeshBasicMaterial) {
+      const targetScale = hovered ? 1.8 : 1.3;
+      const current = glowRef.current.scale.x;
+      const next = current + (targetScale - current) * 0.08;
+      glowRef.current.scale.set(next, next, next);
       glowRef.current.material.opacity = hovered ? 0.8 : 0.4;
     }
   });

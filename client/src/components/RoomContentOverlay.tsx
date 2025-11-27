@@ -82,7 +82,7 @@ export function RoomContentOverlay({ roomId, onClose, children }: RoomContentOve
         </motion.button>
 
         {/* Content padding with subtle spacing */}
-        <div className="p-8 md:p-12 lg:p-16 text-[#F5F5F5]">
+        <div className="p-8 md:p-12 lg:p-16 text-[#F5F5F5] space-y-6">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -91,6 +91,16 @@ export function RoomContentOverlay({ roomId, onClose, children }: RoomContentOve
             {children}
           </motion.div>
         </div>
+
+        {/* Exit affordance hint */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="absolute bottom-4 left-4 text-xs text-[#4A4A4A]"
+        >
+          Press ESC or click outside to close
+        </motion.div>
       </motion.div>
     </motion.div>
   );
