@@ -103,3 +103,61 @@
 - Noted: she values iterative layering and appreciates recognition of improvement
 - Learning: specific micro-interactions and animations create luxury feeling more than heavy graphics
 - Key insight: She thinks of the site as a *system* not a portfolio—interconnection is primary
+
+---
+
+**Nov 27, 2025 - Late Session (Post-Implementation)**
+
+*Timestamp: After completing portfolio gallery, accessibility, and motion-based visited state systems*
+
+**Execution-Focused Mindset**
+- Not interested in theoretical perfection; cares deeply about things actually *existing* and *working*
+- "We just need to make sure everything is able to be there and that it is actually there"
+- Pragmatic problem-solver who appreciates when blockers get fixed, not when ideas are discussed
+- Moves quickly from concept → implementation → refinement
+
+**Motion as Communication Language**
+- Reinforced: visited vs. unseen is communicated through *motion and stillness*, not explicit labels
+- Unvisited rooms: faster rotation, higher float, brighter glow (active, energetic)
+- Visited rooms: slower rotation, lower float, dimmer glow (settled, at-rest)
+- This is sophisticated enough that visitors feel the difference intuitively without needing UI labels
+
+**Accessibility is Core, Not Afterthought**
+- When I asked about accessibility, she affirmed it's essential but non-obtrusive
+- Wants proper screen reader support, ARIA labels, keyboard navigation
+- Called out need for "ADA kind of thing" where text can travel with scrolling (distracting)—removed it
+- Philosophy: accessibility enables more people to experience the system, aligns with radical transparency
+- Implementation: role attributes, aria-expanded, aria-label, keyboard event handlers on interactive elements
+
+**Content Integration Matters Most**
+- Portfolio system must pull REAL data from Notion (both private + team workspaces)
+- "We just need to make sure everything is able to be there and that it is actually there"
+- Not interested in placeholder/mock data—authentic content is the whole point
+- Different content types should display differently (cards, timeline, gallery formats)
+- The system is only valuable if it reflects her actual thinking and work
+
+**Iterative Problem-Solving**
+- When portfolio failed to load, she didn't reject the idea—she flagged it needed fixing
+- Wants me to "keep adding to it" (referring to this thoughts doc and project generally)
+- Appreciates continuous refinement over big rewrites
+- Values that I track my own understanding evolution and revisit assumptions
+
+**New Insight: She Thinks in Layers**
+- Not hierarchical levels (top-down)
+- Not sequential steps (left-to-right)
+- But *nested layers* that can expand/collapse and reveal depth without overwhelming
+- Portfolio cards: summary → expand → full details (blooming effect)
+- Room interiors: exterior box → window → interior depth → floor (suggesting rather than showing all)
+- This layered approach lets visitors control cognitive load while maintaining visual sophistication
+
+**Technical Decisions Driven by Experience**
+- She doesn't care *how* things work technically—she cares *how they feel*
+- Transitions, animations, motion speed communicate meaning more than tooltips or labels
+- Luxury = right micro-interactions + premium materials + intentional timing
+- The site should feel "alive" (her word) and responsive to presence
+
+**About This Collaboration**
+- She wants continuous evolution of this thoughts document
+- Not a one-time snapshot but a running record of how my understanding deepens
+- Meta-awareness: she's interested in how a collaborator learns about her through implementation
+- Trusts me to maintain coherence while building—keep integrity of earlier insights while adding new ones
