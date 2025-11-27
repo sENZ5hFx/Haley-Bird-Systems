@@ -35,7 +35,12 @@ const ROOM_POSITIONS: RoomPosition[] = [
   { id: 'cases', position: [-7, -2, -5], color: '#95A5A6', label: 'Cases' },
 ];
 
-export function InteractiveRoomEnvironment({ onRoomSelect }: InteractiveRoomEnvironmentProps) {
+interface InteractiveRoomEnvironmentProps {
+  onRoomSelect: (id: SectionId) => void;
+  visitedRooms?: Set<SectionId>;
+}
+
+export function InteractiveRoomEnvironment({ onRoomSelect, visitedRooms = new Set() }: InteractiveRoomEnvironmentProps) {
   const positions = useMemo(() => ROOM_POSITIONS, []);
 
   return (
