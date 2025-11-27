@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import notionRoutes from "./routes/notion";
 import portfolioRoutes from "./routes/api/portfolio";
+import resumeRoutes from "./routes/api/resume";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -10,6 +11,7 @@ export async function registerRoutes(
 ): Promise<Server> {
   app.use("/api/notion", notionRoutes);
   app.use("/api/portfolio", portfolioRoutes);
+  app.use("/api/resume", resumeRoutes);
 
   return httpServer;
 }
