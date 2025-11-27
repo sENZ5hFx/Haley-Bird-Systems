@@ -11,6 +11,12 @@ export interface RouteLink {
   breadcrumb?: string[];
 }
 
+export interface LinkPart {
+  type: 'text' | 'link';
+  content: string;
+  target?: SectionId;
+}
+
 // Map of all available rooms/sections
 export const ROOM_MAP: Record<string, SectionId> = {
   'hero': 'hero',
@@ -22,7 +28,7 @@ export const ROOM_MAP: Record<string, SectionId> = {
   'connections': 'connections',
   'process': 'process',
   'cases': 'cases',
-  'portfolio': 'cases', // portfolio maps to cases
+  'portfolio': 'cases',
   'work': 'cases',
   'projects': 'cases',
   'rooms': 'rooms',
@@ -118,10 +124,11 @@ export function extractLinksFromText(text: string): RouteLink[] {
 }
 
 /**
- * Convert text links to clickable format
+ * Parse text into parts (text and links)
+ * Returns data structure for React components to render
  */
-export function linkifyText(text: string, onLinkClick: (roomId: SectionId) => void): React.ReactNode[] {
-  const parts: React.ReactNode[] = [];
+export function parseTextLinks(text: string): LinkPart[] {
+  const parts: LinkPart[] = [];
   let lastIndex = 0;
 
   const bracketPattern = /\[\[([^\]]+)\]\]/g;
@@ -132,26 +139,28 @@ export function linkifyText(text: string, onLinkClick: (roomId: SectionId) => vo
 
     // Add text before link
     if (match.index > lastIndex) {
-      parts.push(text.substring(lastIndex, match.index));
+      parts.push({
+        type: 'text',
+        content: text.substring(lastIndex, match.index),
+      });
     }
 
     if (target) {
-      parts.push(
-        <button
-          key={`link-${match.index}`}
-          onClick={() => onLinkClick(target)}
-          className="text-blue-400 hover:text-blue-300 underline cursor-pointer"
-        >
-          {match[1]}
-        </button>
-      );
+      parts.push({
+        type: 'link',
+        content: match[1],
+        target,
+      });
     }
 
     lastIndex = bracketPattern.lastIndex;
   }
 
   if (lastIndex < text.length) {
-    parts.push(text.substring(lastIndex));
+    parts.push({
+      type: 'text',
+      content: text.substring(lastIndex),
+    });
   }
 
   return parts;

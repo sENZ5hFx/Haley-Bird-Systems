@@ -297,5 +297,3 @@ export async function extractBookVersions(
     return [];
   }
 }
-
-export type { ProcessedContent };
