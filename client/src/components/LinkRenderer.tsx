@@ -3,7 +3,8 @@
  * Parses [[room-name]] patterns and makes them clickable
  */
 
-import { parseTextLinks, SectionId } from '@/lib/linkResolver';
+import { parseTextLinks } from '@/lib/linkResolver';
+import { SectionId } from '@/types';
 import { motion } from 'framer-motion';
 
 interface LinkRendererProps {

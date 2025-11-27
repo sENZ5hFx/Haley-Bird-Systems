@@ -3,7 +3,7 @@
  * Handles navigation between rooms, pages, and back links
  */
 
-import { SectionId } from '../types';
+import { SectionId } from '@/types';
 
 export interface RouteLink {
   target: SectionId;
