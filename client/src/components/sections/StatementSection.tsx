@@ -1,12 +1,14 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import { useExperience } from '@/lib/stores/useExperience';
+import { useLocation } from 'wouter';
 
 export function StatementSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(textRef, { once: false, margin: '-20%' });
   const { setCursorState } = useExperience();
+  const [, navigate] = useLocation();
   
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -73,11 +75,25 @@ export function StatementSection() {
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.8, delay: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="text-sm md:text-base text-[#4A4A4A] mt-8 max-w-xl font-light leading-relaxed"
+          transition={{ duration: 0.6, delay: 1, ease: [0.16, 1, 0.3, 1] }}
+          className="text-base md:text-lg text-[#8A8A8A] mt-12 space-y-6"
         >
-          My approach combines strategic clarity with creative intuition, 
-          building brand architectures that are both systematic and deeply human.
+          <div>
+            This isn't about surfaces. It's about the stories, transitions, and meaning-making that happen at the intersection of vision and execution.
+          </div>
+          
+          <div>
+            A coherent brand system means every touchpoint reinforces the same philosophy—from strategy to visual identity to the way a customer experiences your world.
+          </div>
+
+          <div>
+            I build systems that expand human <motion.span 
+              className="text-[#F5F5F5] font-medium cursor-pointer hover:text-blue-400 transition-colors"
+              onClick={() => navigate('/journey')}
+            >
+              agency
+            </motion.span>, not systems that constrain it.
+          </div>
         </motion.p>
       </motion.div>
     </motion.section>
