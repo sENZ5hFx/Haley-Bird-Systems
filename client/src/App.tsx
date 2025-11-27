@@ -12,9 +12,11 @@
 
 import { Canvas } from "@react-three/fiber";
 import { Suspense, useEffect, useRef, lazy, useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import { useExperience } from "./lib/stores/useExperience";
 import { InteractiveRoomEnvironment } from "./components/three/InteractiveRoomEnvironment";
 import { RoomContentOverlay } from "./components/RoomContentOverlay";
+import { PortfolioGallery } from "./components/PortfolioGallery";
 import { NavigationUI } from "./components/NavigationUI";
 import { CustomCursor } from "./components/CustomCursor";
 import { LoadingScreen } from "./components/LoadingScreen";
@@ -42,6 +44,7 @@ function App() {
   const [showHero, setShowHero] = useState(true);
   const [selectedRoom, setSelectedRoom] = useState<SectionId | null>(null);
   const [visitedRooms, setVisitedRooms] = useState<Set<SectionId>>(new Set());
+  const [showPortfolio, setShowPortfolio] = useState(false);
 
   useEffect(() => {
     if ('serviceWorker' in navigator) {
@@ -141,9 +144,19 @@ function App() {
       {/* Hero Section Overlay */}
       {showHero && (
         <div className="fixed inset-0 z-20 pointer-events-auto">
-          <HeroSection onEnter={() => handleEnter()} />
+          <HeroSection 
+            onEnter={() => handleEnter()} 
+            onViewPortfolio={() => setShowPortfolio(true)}
+          />
         </div>
       )}
+
+      {/* Portfolio Gallery */}
+      <AnimatePresence>
+        {showPortfolio && (
+          <PortfolioGallery onClose={() => setShowPortfolio(false)} />
+        )}
+      </AnimatePresence>
 
       {/* Room Content Overlay (when room selected) */}
       {selectedRoom && !showHero && (

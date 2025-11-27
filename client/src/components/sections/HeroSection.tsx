@@ -5,9 +5,10 @@ import { SectionId } from '@/types';
 
 interface HeroSectionProps {
   onEnter?: (section: SectionId) => void;
+  onViewPortfolio?: () => void;
 }
 
-export function HeroSection({ onEnter }: HeroSectionProps) {
+export function HeroSection({ onEnter, onViewPortfolio }: HeroSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const { setCursorState } = useExperience();
@@ -72,7 +73,7 @@ export function HeroSection({ onEnter }: HeroSectionProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={isVisible ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 1.2 }}
-          className="flex gap-4 mt-16"
+          className="flex gap-4 mt-16 flex-wrap"
         >
           <motion.button
             onClick={() => onEnter?.('statement')}
@@ -82,7 +83,18 @@ export function HeroSection({ onEnter }: HeroSectionProps) {
             whileTap={{ scale: 0.98 }}
             className="px-8 py-3 border border-[#4A9EFF] text-[#4A9EFF] text-sm uppercase tracking-wider font-light rounded-lg hover:bg-[#4A9EFF]/10 transition-colors"
           >
-            Enter
+            Enter Experience
+          </motion.button>
+          
+          <motion.button
+            onClick={onViewPortfolio}
+            onMouseEnter={() => setCursorState('hover')}
+            onMouseLeave={() => setCursorState('default')}
+            whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(232, 232, 232, 0.15)' }}
+            whileTap={{ scale: 0.98 }}
+            className="px-8 py-3 border border-[#E8E8E8] text-[#E8E8E8] text-sm uppercase tracking-wider font-light rounded-lg hover:bg-[#E8E8E8]/10 transition-colors"
+          >
+            View Portfolio
           </motion.button>
           
           <motion.button
@@ -91,7 +103,7 @@ export function HeroSection({ onEnter }: HeroSectionProps) {
             onMouseLeave={() => setCursorState('default')}
             className="px-8 py-3 border border-[#4A4A4A] text-[#4A4A4A] text-sm uppercase tracking-wider font-light rounded-lg hover:border-[#E8E8E8] hover:text-[#E8E8E8] transition-colors"
           >
-            Explore
+            More Info
           </motion.button>
         </motion.div>
       </div>
