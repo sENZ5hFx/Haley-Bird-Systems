@@ -4,13 +4,15 @@
  */
 
 import { motion } from 'framer-motion';
-import { ChevronLeft, Home } from 'lucide-react';
+import { ChevronLeft, Home, ChevronRight } from 'lucide-react';
 import { SectionId } from '@/types';
+import { getBreadcrumbTrail, getRelatedLinks, BREADCRUMB_STRUCTURE } from '@/lib/linkResolver';
 
 interface NavigationUIProps {
   currentRoom: SectionId | null;
   onBack: () => void;
   onHome: () => void;
+  onNavigate?: (roomId: SectionId) => void;
   visitedRooms: Set<SectionId>;
 }
 
@@ -28,7 +30,7 @@ const ROOM_LABELS: Record<SectionId, string> = {
   'footer': 'Footer',
 };
 
-export function NavigationUI({ currentRoom, onBack, onHome, visitedRooms }: NavigationUIProps) {
+export function NavigationUI({ currentRoom, onBack, onHome, onNavigate, visitedRooms }: NavigationUIProps) {
   const isInRoom = currentRoom && currentRoom !== 'hero';
 
   return (
@@ -67,16 +69,29 @@ export function NavigationUI({ currentRoom, onBack, onHome, visitedRooms }: Navi
             </motion.button>
           </div>
 
-          {/* Center: Breadcrumb */}
+          {/* Center: Breadcrumb Navigation */}
           {isInRoom && currentRoom && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="flex items-center gap-2 text-sm"
+              className="flex items-center gap-1 text-sm"
             >
-              <span className="text-[#4A4A4A]">Environment</span>
-              <span className="text-[#4A4A4A]">/</span>
-              <span className="text-[#F5F5F5] font-medium">{ROOM_LABELS[currentRoom]}</span>
+              {getBreadcrumbTrail(currentRoom).map((roomId, idx, arr) => (
+                <div key={roomId} className="flex items-center gap-1">
+                  <button
+                    onClick={() => onNavigate?.(roomId)}
+                    className={`px-2 py-1 rounded transition-all ${
+                      currentRoom === roomId
+                        ? 'text-[#F5F5F5] font-medium cursor-default'
+                        : 'text-[#4A4A4A] hover:text-[#8A8A8A] hover:bg-white/5'
+                    }`}
+                    disabled={currentRoom === roomId}
+                  >
+                    {ROOM_LABELS[roomId]}
+                  </button>
+                  {idx < arr.length - 1 && <ChevronRight size={16} className="text-[#4A4A4A]" />}
+                </div>
+              ))}
               {visitedRooms.has(currentRoom) && (
                 <span className="ml-2 px-2 py-1 bg-white/5 rounded text-[#4A4A4A] text-xs">
                   Visited
@@ -85,18 +100,39 @@ export function NavigationUI({ currentRoom, onBack, onHome, visitedRooms }: Navi
             </motion.div>
           )}
 
-          {/* Right: Navigation hint */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-xs text-[#4A4A4A] text-right"
-          >
-            {isInRoom ? (
-              <p>Press ESC or click back to explore</p>
-            ) : (
+          {/* Right: Related Links or Navigation hint */}
+          {isInRoom && currentRoom && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex items-center gap-2"
+            >
+              {getRelatedLinks(currentRoom).length > 0 && (
+                <div className="flex gap-2">
+                  {getRelatedLinks(currentRoom).map((relatedId) => (
+                    <motion.button
+                      key={relatedId}
+                      onClick={() => onNavigate?.(relatedId)}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-2 py-1 text-xs bg-white/5 text-[#8A8A8A] hover:text-[#F5F5F5] hover:bg-white/10 rounded transition-all border border-white/5 hover:border-white/20"
+                    >
+                      → {ROOM_LABELS[relatedId]}
+                    </motion.button>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
+          {!isInRoom && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-xs text-[#4A4A4A] text-right"
+            >
               <p>Drag to rotate • Scroll to zoom • Click rooms to enter</p>
-            )}
-          </motion.div>
+            </motion.div>
+          )}
         </div>
       </div>
     </motion.div>
