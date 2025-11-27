@@ -39,13 +39,22 @@ export function PortfolioCard({
       {/* Card container with smooth expansion */}
       <motion.div
         layout="position"
-        className="relative rounded-lg border border-white/10 overflow-hidden bg-gradient-to-br from-white/5 to-white/2 backdrop-blur-sm hover:border-white/20 transition-colors"
+        className="relative rounded-lg border border-white/10 overflow-hidden bg-gradient-to-br from-white/5 to-white/2 backdrop-blur-sm hover:border-white/20 transition-colors cursor-pointer"
         style={{
           background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
           boxShadow: isExpanded
             ? '0 20px 40px rgba(0, 0, 0, 0.3)'
             : '0 4px 16px rgba(0, 0, 0, 0.1)',
         }}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setIsExpanded(!isExpanded);
+          }
+        }}
+        aria-expanded={isExpanded}
       >
         {/* Header - always visible */}
         <motion.div
@@ -54,7 +63,7 @@ export function PortfolioCard({
         >
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-2">
-              <span className="text-2xl">{emoji}</span>
+              <span className="text-2xl" aria-hidden="true">{emoji}</span>
               <motion.h3
                 layout="position"
                 className="text-base md:text-lg font-medium text-[#F5F5F5] truncate"

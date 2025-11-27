@@ -56,6 +56,9 @@ export function PortfolioGallery({ onClose }: PortfolioGalleryProps) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex items-center justify-center pointer-events-auto"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="portfolio-title"
     >
       {/* Backdrop */}
       <motion.div
@@ -63,6 +66,7 @@ export function PortfolioGallery({ onClose }: PortfolioGalleryProps) {
         animate={{ opacity: 1 }}
         onClick={onClose}
         className="absolute inset-0 bg-black/80 backdrop-blur-md"
+        aria-hidden="true"
       />
 
       {/* Content container */}
@@ -79,11 +83,14 @@ export function PortfolioGallery({ onClose }: PortfolioGalleryProps) {
           className="flex items-center justify-between mb-8"
         >
           <div>
-            <h2 className="text-3xl md:text-4xl font-light text-[#F5F5F5] mb-2">
+            <h2 id="portfolio-title" className="text-3xl md:text-4xl font-light text-[#F5F5F5] mb-2">
               Portfolio
             </h2>
             <p className="text-sm text-[#4A4A4A]">
-              {filteredItems.length} items • Click to expand
+              <span aria-label={`${filteredItems.length} items available`}>
+                {filteredItems.length} items
+              </span>
+              {' '}• Click any card to expand and view details
             </p>
           </div>
           <motion.button
