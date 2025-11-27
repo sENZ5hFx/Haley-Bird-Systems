@@ -1,6 +1,6 @@
 /**
  * Room3D - Individual interactive room in the 3D environment
- * Represents a clickable, glowing box in the explorable space
+ * Premium luxury render with enhanced glow, depth, and interactive animations
  */
 
 import { useRef, useState } from 'react';
@@ -18,60 +18,99 @@ interface Room3DProps {
 
 export function Room3D({ id, position, color, label, onSelect }: Room3DProps) {
   const groupRef = useRef<THREE.Group>(null);
-  const meshRef = useRef<THREE.Mesh>(null);
+  const boxRef = useRef<THREE.Mesh>(null);
+  const glowRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
 
   useFrame(({ clock }) => {
-    if (groupRef.current && !hovered) {
-      groupRef.current.rotation.y += 0.001;
-      groupRef.current.position.y = position[1] + Math.sin(clock.getElapsedTime()) * 0.3;
+    if (groupRef.current) {
+      // Smooth floating animation
+      const t = clock.getElapsedTime();
+      const targetY = position[1] + Math.sin(t * 0.7) * 0.4;
+      groupRef.current.position.y += (targetY - groupRef.current.position.y) * 0.05;
+      
+      if (!hovered) {
+        groupRef.current.rotation.y += 0.0008;
+      }
+    }
+
+    // Smooth scale animation
+    if (boxRef.current) {
+      const targetScale = hovered ? 1.15 : 1;
+      boxRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1);
+    }
+
+    // Enhanced glow effect
+    if (glowRef.current) {
+      glowRef.current.scale.lerp(
+        new THREE.Vector3(hovered ? 1.8 : 1.3, hovered ? 1.8 : 1.3, hovered ? 1.8 : 1.3),
+        0.08
+      );
+      glowRef.current.material.opacity = hovered ? 0.8 : 0.4;
     }
   });
 
   return (
     <group ref={groupRef} position={position}>
-      {/* Glowing box */}
+      {/* Premium glowing aura (outer) */}
+      <mesh ref={glowRef} scale={1.3}>
+        <boxGeometry args={[2.2, 2.7, 2.2]} />
+        <meshBasicMaterial
+          color={color}
+          transparent={true}
+          opacity={0.4}
+          wireframe={false}
+        />
+      </mesh>
+
+      {/* Main box with premium materials */}
       <mesh
-        ref={meshRef}
+        ref={boxRef}
         onClick={() => onSelect(id)}
         onPointerEnter={() => setHovered(true)}
         onPointerLeave={() => setHovered(false)}
-        scale={hovered ? 1.1 : 1}
       >
         <boxGeometry args={[2, 2.5, 2]} />
         <meshStandardMaterial
           color={color}
           emissive={color}
-          emissiveIntensity={hovered ? 1.5 : 0.8}
-          metalness={0.7}
-          roughness={0.3}
-          wireframe={false}
+          emissiveIntensity={hovered ? 2 : 1}
+          metalness={0.85}
+          roughness={0.15}
+          envMapIntensity={1.5}
+          toneMapped={true}
         />
       </mesh>
 
-      {/* Room interior suggestion */}
-      <mesh position={[0, 0, -0.95]}>
-        <planeGeometry args={[1.8, 2.2]} />
+      {/* Interior depth plane - luxury glass effect */}
+      <mesh position={[0, 0, -1]}>
+        <planeGeometry args={[1.9, 2.4]} />
         <meshStandardMaterial
           color={color}
           emissive={color}
-          emissiveIntensity={0.4}
+          emissiveIntensity={0.6}
+          metalness={0.6}
+          roughness={0.2}
+          transparent={true}
+          opacity={0.8}
         />
       </mesh>
 
-      {/* Glow effect */}
+      {/* Multi-point lighting for luxury depth */}
       <pointLight
-        position={[0, 0, 0]}
+        position={[0.5, 0.5, 0.5]}
         color={color}
-        intensity={hovered ? 3 : 1.5}
-        distance={15}
+        intensity={hovered ? 4 : 2}
+        distance={20}
+        decay={2}
       />
-
-      {/* Label - Simplified */}
-      <mesh position={[0, 1.5, 0]}>
-        <planeGeometry args={[3, 0.8]} />
-        <meshBasicMaterial color={color} transparent opacity={0.7} />
-      </mesh>
+      <pointLight
+        position={[-0.5, -0.5, -0.5]}
+        color={color}
+        intensity={hovered ? 2.5 : 1}
+        distance={15}
+        decay={2}
+      />
     </group>
   );
 }

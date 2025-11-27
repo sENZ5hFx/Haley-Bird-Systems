@@ -61,6 +61,9 @@ function App() {
       'connections': InteractiveConnections,
       'process': ProcessDocumentation,
       'cases': CaseStudiesSection,
+      'hero': () => null,
+      'rooms': () => null,
+      'footer': () => null,
     };
 
     if (!selectedRoom || !roomMap[selectedRoom]) return null;

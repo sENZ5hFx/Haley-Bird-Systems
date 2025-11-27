@@ -40,15 +40,28 @@ export function InteractiveRoomEnvironment({ onRoomSelect }: InteractiveRoomEnvi
 
   return (
     <>
-      {/* Ambient lighting */}
-      <ambientLight intensity={0.5} color="#ffffff" />
-
-      {/* Directional light */}
+      {/* Premium lighting setup for luxury depth */}
+      <ambientLight intensity={0.3} color="#ffffff" />
+      
+      {/* Main directional light with subtle warmth */}
       <directionalLight
-        position={[10, 10, 5]}
-        intensity={1}
-        color="#ffffff"
+        position={[12, 16, 8]}
+        intensity={1.2}
+        color="#f5f5f5"
         castShadow
+        shadow-mapSize={[2048, 2048]}
+        shadow-camera-far={100}
+        shadow-camera-left={-30}
+        shadow-camera-right={30}
+        shadow-camera-top={30}
+        shadow-camera-bottom={-30}
+      />
+
+      {/* Fill light for depth */}
+      <directionalLight
+        position={[-8, 8, -5]}
+        intensity={0.4}
+        color="#b4d7ff"
       />
 
       {/* Grid floor reference */}
