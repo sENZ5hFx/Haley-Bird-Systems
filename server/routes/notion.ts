@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { scanNotionGarden, type RoomContent } from '../lib/notionScanner';
 
 const router = Router();
 
@@ -211,6 +212,38 @@ router.get('/status', (req, res) => {
     configured: !!notionApiKey,
     status: notionApiKey ? 'connected' : 'using_mock_data'
   });
+});
+
+/**
+ * GET /api/notion/garden - Scan and return organized garden content
+ * Scans the Notion workspace for all pages and organizes by type
+ */
+router.get('/garden', async (req, res) => {
+  try {
+    const gardenContent = await scanNotionGarden();
+    
+    res.json({
+      success: true,
+      source: 'notion',
+      data: gardenContent,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error('Garden scanning error:', error);
+    // Return graceful fallback
+    res.json({
+      success: true,
+      source: 'fallback',
+      data: {
+        statement: 'Welcome to my thinking practice.',
+        practices: [],
+        cases: [],
+        journey: [],
+        connections: [],
+      },
+      error: 'Using fallback - Notion connection may not be configured'
+    });
+  }
 });
 
 export default router;

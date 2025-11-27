@@ -29,17 +29,17 @@ interface SceneProps {
  * Customize colors, lighting, and particle intensity here.
  */
 const ROOM_PROFILES: Record<SectionId, RoomProfile> = {
-  'hero': { id: 'hero', label: 'Entry', color: '#1A1A1A', lightIntensity: 1.0, particleIntensity: 1.0 },
-  'statement': { id: 'statement', label: 'Signal', color: '#4A9EFF', lightIntensity: 0.9, particleIntensity: 0.8 },
-  'portals': { id: 'portals', label: 'Portals', color: '#2ECC71', lightIntensity: 0.7, particleIntensity: 0.6 },
-  'journey': { id: 'journey', label: 'Journey', color: '#E74C3C', lightIntensity: 0.8, particleIntensity: 0.9 },
-  'garden': { id: 'garden', label: 'Garden', color: '#9B59B6', lightIntensity: 1.0, particleIntensity: 1.0 },
-  'practices': { id: 'practices', label: 'Practices', color: '#F39C12', lightIntensity: 0.85, particleIntensity: 0.7 },
-  'connections': { id: 'connections', label: 'Connections', color: '#1ABC9C', lightIntensity: 0.9, particleIntensity: 0.8 },
-  'process': { id: 'process', label: 'Process', color: '#E8E8E8', lightIntensity: 1.1, particleIntensity: 0.5 },
-  'cases': { id: 'cases', label: 'Cases', color: '#95A5A6', lightIntensity: 0.8, particleIntensity: 0.7 },
-  'rooms': { id: 'rooms', label: 'Rooms', color: '#3498DB', lightIntensity: 0.9, particleIntensity: 0.9 },
-  'footer': { id: 'footer', label: 'Close', color: '#1A1A1A', lightIntensity: 0.6, particleIntensity: 0.5 },
+  'hero': { id: 'hero', label: 'Entry', color: '#0F0F15', lightIntensity: 1.0, particleIntensity: 1.0 },
+  'statement': { id: 'statement', label: 'Signal', color: '#0F1419', lightIntensity: 0.95, particleIntensity: 0.8 },
+  'portals': { id: 'portals', label: 'Portals', color: '#0F1419', lightIntensity: 0.85, particleIntensity: 0.6 },
+  'journey': { id: 'journey', label: 'Journey', color: '#0F1419', lightIntensity: 0.9, particleIntensity: 0.9 },
+  'garden': { id: 'garden', label: 'Garden', color: '#0F1419', lightIntensity: 1.0, particleIntensity: 1.0 },
+  'practices': { id: 'practices', label: 'Practices', color: '#0F1419', lightIntensity: 0.9, particleIntensity: 0.7 },
+  'connections': { id: 'connections', label: 'Connections', color: '#0F1419', lightIntensity: 0.95, particleIntensity: 0.8 },
+  'process': { id: 'process', label: 'Process', color: '#0F1419', lightIntensity: 1.1, particleIntensity: 0.5 },
+  'cases': { id: 'cases', label: 'Cases', color: '#0F1419', lightIntensity: 0.85, particleIntensity: 0.7 },
+  'rooms': { id: 'rooms', label: 'Rooms', color: '#0F1419', lightIntensity: 0.95, particleIntensity: 0.9 },
+  'footer': { id: 'footer', label: 'Close', color: '#0F0F15', lightIntensity: 0.7, particleIntensity: 0.5 },
 };
 
 export function Scene({ activeSection = 'hero' }: SceneProps) {
