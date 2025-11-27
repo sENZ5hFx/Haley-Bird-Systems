@@ -50,7 +50,7 @@ export function Scene({ activeSection = 'hero' }: SceneProps) {
       <color attach="background" args={[roomProfile.color]} />
       <fog attach="fog" args={[roomProfile.color, 10, 50]} />
       
-      <AtmosphericLights lightIntensity={roomProfile.lightIntensity} />
+      <AtmosphericLights lightIntensity={roomProfile.lightIntensity || 1.0} />
       <SpatialAudioController />
       
       <Suspense fallback={null}>

@@ -116,7 +116,7 @@ function App() {
       {/* Content layer - room-based navigation, not scroll-based */}
       <main className="content-layer relative z-10" style={{ position: 'relative' }}>
         {/* Hero: always shown, acts as entry point to navigate between rooms */}
-        <HeroSection onEnter={() => setLocalActiveSection('statement')} />
+        <HeroSection onEnter={setLocalActiveSection} />
         
         {/* Active Room: only one visible at a time */}
         <div className="min-h-screen flex items-center justify-center">
