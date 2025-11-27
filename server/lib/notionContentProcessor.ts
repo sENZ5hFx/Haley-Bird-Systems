@@ -129,7 +129,9 @@ export async function extractRichContent(
       }
 
       if ('relation' in block && block.relation && maxDepth > 0) {
-        linkedPages.push(...block.relation);
+        if (Array.isArray(block.relation)) {
+          linkedPages.push(...block.relation);
+        }
       }
 
       if ('database' in block && block.database) {
